@@ -247,77 +247,25 @@ function get_timeformats()
  */
 function get_payment_options()
 {
-	$config = get_instance()->config;
 	$lang = get_instance()->lang;
 
 	$payments = [];
 
+	$payments['Cash'] = 'Cash';
+	$payments['Debit/Credit Card'] = 'Debit/Credit Card';
+	$payments['Snap Finance'] = 'Snap Finance';
+	$payments['Acima Financing'] = 'Acima Financing';
+	$payments['Progressive Financing'] = 'Progressive Financing';
+	$payments['Synchrony Bank Financing'] = 'Synchrony Bank Financing';
+	$payments['Check'] = 'Check';
+	$payments['mattresswholesalemi.com'] = 'mattresswholesalemi.com';
 
-	if($config->item('payment_options_order') == 'payments')
-	{
-        $payments['Cash'] = 'Cash';
-        $payments['Debit/Credit Card'] = 'Debit/Credit Card';
-        $payments['Snap Finance'] = 'Snap Finance';
-        $payments['Acima Financing'] = 'Acima Financing';
-        $payments['Progressive Financing'] = 'Progressive Financing';
-        $payments['Synchrony Bank Financing'] = 'Synchrony Bank Financing';
-        $payments['Check'] = 'Check';
-        $payments['mattresswholesalemi.com'] = 'mattresswholesalemi.com';
-		$payments[$lang->line('sales_cash')] = $lang->line('sales_cash');
-	}
-	elseif($config->item('payment_options_order') == 'debitcashcredit')
-	{
-        $payments['Cash'] = 'Cash';
-        $payments['Debit/Credit Card'] = 'Debit/Credit Card';
-        $payments['Snap Finance'] = 'Snap Finance';
-        $payments['Acima Financing'] = 'Acima Financing';
-        $payments['Progressive Financing'] = 'Progressive Financing';
-        $payments['Synchrony Bank Financing'] = 'Synchrony Bank Financing';
-        $payments['Check'] = 'Check';
-        $payments['mattresswholesalemi.com'] = 'mattresswholesalemi.com';
-		$payments[$lang->line('sales_cash')] = $lang->line('sales_cash');
-	}
-	elseif($config->item('payment_options_order') == 'creditdebitcash')
-	{
-        $payments['Cash'] = 'Cash';
-        $payments['Debit/Credit Card'] = 'Debit/Credit Card';
-        $payments['Snap Finance'] = 'Snap Finance';
-        $payments['Acima Financing'] = 'Acima Financing';
-        $payments['Progressive Financing'] = 'Progressive Financing';
-        $payments['Synchrony Bank Financing'] = 'Synchrony Bank Financing';
-        $payments['Check'] = 'Check';
-        $payments['mattresswholesalemi.com'] = 'mattresswholesalemi.com';
-		$payments[$lang->line('sales_cash')] = $lang->line('sales_cash');
-	}
-	elseif($config->item('payment_options_order') == 'creditcashdebit')
-	{
-		$payments[$lang->line('sales_cash')] = $lang->line('sales_cash');
-        $payments['Cash'] = 'Cash';
-        $payments['Debit/Credit Card'] = 'Debit/Credit Card';
-        $payments['Snap Finance'] = 'Snap Finance';
-        $payments['Acima Financing'] = 'Acima Financing';
-        $payments['Progressive Financing'] = 'Progressive Financing';
-        $payments['Synchrony Bank Financing'] = 'Synchrony Bank Financing';
-        $payments['Check'] = 'Check';
-        $payments['mattresswholesalemi.com'] = 'mattresswholesalemi.com';
-	}
-	else // default: if($config->item('payment_options_order') == 'cashdebitcredit')
-	{
-		$payments[$lang->line('sales_cash')] = $lang->line('sales_cash');
-        $payments['Cash'] = 'Cash';
-        $payments['Debit/Credit Card'] = 'Debit/Credit Card';
-        $payments['Snap Finance'] = 'Snap Finance';
-        $payments['Acima Financing'] = 'Acima Financing';
-        $payments['Progressive Financing'] = 'Progressive Financing';
-        $payments['Synchrony Bank Financing'] = 'Synchrony Bank Financing';
-        $payments['Check'] = 'Check';
-        $payments['mattresswholesalemi.com'] = 'mattresswholesalemi.com';
-	}
-
+	// Optionally include these localized keys (remove if not needed)
+	$payments[$lang->line('sales_cash')] = $lang->line('sales_cash');
 	$payments[$lang->line('sales_due')] = $lang->line('sales_due');
 	$payments[$lang->line('sales_check')] = $lang->line('sales_check');
 
-	// If India (list of country codes include India) then include Unified Payment Interface
+	// Optional: Include UPI only if in India
 	if (stripos(get_instance()->config->item('country_codes'), 'IN') !== false)
 	{
 		$payments[$lang->line('sales_upi')] = $lang->line('sales_upi');
@@ -325,6 +273,7 @@ function get_payment_options()
 
 	return $payments;
 }
+
 
 function currency_side()
 {
