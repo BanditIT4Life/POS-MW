@@ -25,15 +25,18 @@
 			</div>
 
 			<div class="form-group form-group-sm">
-				<?php echo form_label(lang('Google API Key (Address Suggestion'), 'google_maps_api_key', array('class'=>'control-label col-xs-3')); ?>
-				<div class="col-xs-8">
-					<?php echo form_input(array(
-						'name'=>'google_maps_api_key',
-						'id'=>'google_maps_api_key',
-						'class'=>'form-control input-sm',
-						'value'=>$this->config->item('google_maps_api_key'))); ?>
-				</div>
-			</div>
+	<?php echo form_label('Google Maps API Key (Address Suggestion)', 'google_maps_api_key', array('class'=>'control-label col-xs-2')); ?>
+	<div class='col-xs-4'>
+		<?php echo form_password(array(
+			'name' => 'google_maps_api_key',
+			'id' => 'google_maps_api_key',
+			'class' => 'form-control input-sm',
+			'value' => $this->config->item('google_maps_api_key')
+		)); ?>
+	</div>
+</div>
+
+
 
 			<div class="form-group form-group-sm">
 				<?php echo form_label($this->lang->line('config_thousands_separator'), 'thousands_separator', array('class' => 'control-label col-xs-2')); ?>
