@@ -22,6 +22,7 @@
 		$(document).on('shown.bs.modal', function () {
 			const input = $('#address_1');
 			if (!input.length || input.data('autocomplete-bound')) return;
+			input.attr('placeholder', 'Enter an Address');
 
 			const container = $('<ul>', {
 				id: 'google-autocomplete',
