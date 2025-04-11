@@ -82,8 +82,34 @@
 										if (types.includes('street_number')) {
 											street_number = comp.long_name;
 										} else if (types.includes('route')) {
-											route = comp.long_name;
-										}
+	let streetName = comp.long_name;
+
+	// Replace full suffix with abbreviation
+	const suffixMap = {
+		'Street': 'St',
+		'Avenue': 'Ave',
+		'Boulevard': 'Blvd',
+		'Circle': 'Cir',
+		'Drive': 'Dr',
+		'Court': 'Ct',
+		'Place': 'Pl',
+		'Lane': 'Ln',
+		'Road': 'Rd',
+		'Terrace': 'Ter',
+		'Parkway': 'Pkwy',
+		'Highway': 'Hwy',
+		'Trail': 'Trl',
+		'Way': 'Way'
+	};
+
+	for (const [full, short] of Object.entries(suffixMap)) {
+		const pattern = new RegExp('\\b' + full + '\\b', 'gi'); // match whole word
+		streetName = streetName.replace(pattern, short);
+	}
+
+	route = streetName;
+}
+
 
 										if (types.includes('locality')) {
 											components.city = comp.long_name;
@@ -104,7 +130,7 @@
 										} else if (types.includes('postal_code')) {
 											components.postcode = comp.long_name;
 										} else if (types.includes('country')) {
-											components.country = comp.long_name;
+											components.country = comp.short_name;
 										}
 									}
 
