@@ -393,7 +393,27 @@ class Config extends Secure_Controller
 			'cash_decimals' => $this->input->post('cash_decimals'),
 			'cash_rounding_code' => $this->input->post('cash_rounding_code'),
 			'financial_year' => $this->input->post('financial_year'),
-			'google_maps_api_key' => $this->input->post('google_maps_api_key')
+			'google_maps_api_key' => $this->input->post('google_maps_api_key'),
+    'payment_type_1' => $this->input->post('payment_type_1'),
+    'payment_type_2' => $this->input->post('payment_type_2'),
+    'payment_type_3' => $this->input->post('payment_type_3'),
+    'payment_type_4' => $this->input->post('payment_type_4'),
+    'payment_type_5' => $this->input->post('payment_type_5'),
+'payment_type_6' => $this->input->post('payment_type_6'),
+'payment_type_7' => $this->input->post('payment_type_7'),
+'payment_type_8' => $this->input->post('payment_type_8'),
+'payment_type_9' => $this->input->post('payment_type_9'),
+'payment_type_10' => $this->input->post('payment_type_10'),
+'payment_type_11' => $this->input->post('payment_type_11'),
+'payment_type_12' => $this->input->post('payment_type_12'),
+'payment_type_13' => $this->input->post('payment_type_13'),
+'payment_type_14' => $this->input->post('payment_type_14'),
+'payment_type_15' => $this->input->post('payment_type_15'),
+'payment_type_16' => $this->input->post('payment_type_16'),
+'payment_type_17' => $this->input->post('payment_type_17'),
+'payment_type_18' => $this->input->post('payment_type_18'),
+'payment_type_19' => $this->input->post('payment_type_19'),
+'payment_type_20' => $this->input->post('payment_type_20')
 		);
 
 		$result = $this->Appconfig->batch_save($batch_save_data);
