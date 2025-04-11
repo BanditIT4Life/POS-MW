@@ -247,32 +247,31 @@ function get_timeformats()
  */
 function get_payment_options()
 {
-	$lang = get_instance()->lang;
+    $CI = get_instance();
+    $lang = $CI->lang;
 
-	$payments = [];
+    $payments = [];
 
-	$payments['Cash'] = 'Cash';
-	$payments['Debit/Credit Card'] = 'Debit/Credit Card';
-	$payments['Snap Finance'] = 'Snap Finance';
-	$payments['Acima Financing'] = 'Acima Financing';
-	$payments['Progressive Financing'] = 'Progressive Financing';
-	$payments['Synchrony Bank Financing'] = 'Synchrony Bank Financing';
-	$payments['Check'] = 'Check';
-	$payments['mattresswholesalemi.com'] = 'mattresswholesalemi.com';
+    // Custom payment types from config
+    for ($i = 1; $i <= 20; $i++)
+    {
+        $config_key = "payment_type_$i";
+        $value = $CI->config->item($config_key);
+        if (!empty($value))
+        {
+            $payments[$value] = $value;
+        }
+    }
 
-	// Optionally include these localized keys (remove if not needed)
-	$payments[$lang->line('sales_cash')] = $lang->line('sales_cash');
-	$payments[$lang->line('sales_due')] = $lang->line('sales_due');
-	$payments[$lang->line('sales_check')] = $lang->line('sales_check');
+    // Include UPI if in India
+    if (stripos($CI->config->item('country_codes'), 'IN') !== false)
+    {
+        $payments[$lang->line('sales_upi')] = $lang->line('sales_upi');
+    }
 
-	// Optional: Include UPI only if in India
-	if (stripos(get_instance()->config->item('country_codes'), 'IN') !== false)
-	{
-		$payments[$lang->line('sales_upi')] = $lang->line('sales_upi');
-	}
-
-	return $payments;
+    return $payments;
 }
+
 
 
 function currency_side()
