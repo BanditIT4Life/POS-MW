@@ -36,6 +36,228 @@
 	</div>
 </div>
 
+<div class="form-group form-group-sm">
+	<?php echo form_label('Payment Type 1', 'payment_type_1', array('class'=>'control-label col-xs-2')); ?>
+	<div class='col-xs-4'>
+		 <?php echo form_input(array(
+			'name' => 'payment_type_1',
+			'id' => 'payment_type_1',
+			'class' => 'form-control input-sm',
+			'value' => $this->config->item('payment_type_1')
+		)); ?>
+	</div>
+</div>
+<div class="form-group form-group-sm">
+	<?php echo form_label('Payment Type 2', 'payment_type_2', array('class'=>'control-label col-xs-2')); ?>
+	<div class='col-xs-4'>
+		<?php echo form_input(array(
+			'name' => 'payment_type_2',
+			'id' => 'payment_type_2',
+			'class' => 'form-control input-sm',
+			'value' => $this->config->item('payment_type_2')
+		)); ?>
+	</div>
+</div>
+<div class="form-group form-group-sm">
+	<?php echo form_label('Payment Type 3', 'payment_type_3', array('class'=>'control-label col-xs-2')); ?>
+	<div class='col-xs-4'>
+		<?php echo form_input(array(
+			'name' => 'payment_type_3',
+			'id' => 'payment_type_3',
+			'class' => 'form-control input-sm',
+			'value' => $this->config->item('payment_type_3')
+		)); ?>
+	</div>
+</div>
+<div class="form-group form-group-sm">
+	<?php echo form_label('Payment Type 4', 'payment_type_4', array('class'=>'control-label col-xs-2')); ?>
+	<div class='col-xs-4'>
+		<?php echo form_input(array(
+			'name' => 'payment_type_4',
+			'id' => 'payment_type_4',
+			'class' => 'form-control input-sm',
+			'value' => $this->config->item('payment_type_4')
+		)); ?>
+	</div>
+</div>
+<div class="form-group form-group-sm">
+	<?php echo form_label('Payment Type 5', 'payment_type_5', array('class'=>'control-label col-xs-2')); ?>
+	<div class='col-xs-4'>
+		<?php echo form_input(array(
+			'name' => 'payment_type_5',
+			'id' => 'payment_type_5',
+			'class' => 'form-control input-sm',
+			'value' => $this->config->item('payment_type_5')
+		)); ?>
+	</div>
+</div>
+<div class="form-group form-group-sm">
+	<?php echo form_label('Payment Type 6', 'payment_type_6', array('class'=>'control-label col-xs-2')); ?>
+	<div class='col-xs-4'>
+		<?php echo form_input(array(
+			'name' => 'payment_type_6',
+			'id' => 'payment_type_6',
+			'class' => 'form-control input-sm',
+			'value' => $this->config->item('payment_type_6')
+		)); ?>
+	</div>
+</div>
+<div class="form-group form-group-sm">
+	<?php echo form_label('Payment Type 7', 'payment_type_7', array('class'=>'control-label col-xs-2')); ?>
+	<div class='col-xs-4'>
+		<?php echo form_input(array(
+			'name' => 'payment_type_7',
+			'id' => 'payment_type_7',
+			'class' => 'form-control input-sm',
+			'value' => $this->config->item('payment_type_7')
+		)); ?>
+	</div>
+</div>
+<div class="form-group form-group-sm">
+	<?php echo form_label('Payment Type 8', 'payment_type_8', array('class'=>'control-label col-xs-2')); ?>
+	<div class='col-xs-4'>
+		<?php echo form_input(array(
+			'name' => 'payment_type_8',
+			'id' => 'payment_type_8',
+			'class' => 'form-control input-sm',
+			'value' => $this->config->item('payment_type_8')
+		)); ?>
+	</div>
+</div>
+
+<div class="form-group form-group-sm">
+	<?php echo form_label('Payment Type 9', 'payment_type_9', array('class'=>'control-label col-xs-2')); ?>
+	<div class='col-xs-4'>
+		<?php echo form_input(array(
+			'name' => 'payment_type_9',
+			'id' => 'payment_type_9',
+			'class' => 'form-control input-sm',
+			'value' => $this->config->item('payment_type_9')
+		)); ?>
+	</div>
+</div>
+<div class="form-group form-group-sm">
+	<?php echo form_label('Payment Type 10', 'payment_type_10', array('class'=>'control-label col-xs-2')); ?>
+	<div class='col-xs-4'>
+		<?php echo form_input(array(
+			'name' => 'payment_type_10',
+			'id' => 'payment_type_10',
+			'class' => 'form-control input-sm',
+			'value' => $this->config->item('payment_type_10')
+		)); ?>
+	</div>
+</div>
+<div class="form-group form-group-sm">
+	<?php echo form_label('Payment Type 11', 'payment_type_11', array('class'=>'control-label col-xs-2')); ?>
+	<div class='col-xs-4'>
+		<?php echo form_input(array(
+			'name' => 'payment_type_11',
+			'id' => 'payment_type_11',
+			'class' => 'form-control input-sm',
+			'value' => $this->config->item('payment_type_11')
+		)); ?>
+	</div>
+</div>
+<div class="form-group form-group-sm">
+	<?php echo form_label('Payment Type 12', 'payment_type_12', array('class'=>'control-label col-xs-2')); ?>
+	<div class='col-xs-4'>
+		<?php echo form_input(array(
+			'name' => 'payment_type_12',
+			'id' => 'payment_type_12',
+			'class' => 'form-control input-sm',
+			'value' => $this->config->item('payment_type_12')
+		)); ?>
+	</div>
+</div>
+<div class="form-group form-group-sm">
+	<?php echo form_label('Payment Type 13', 'payment_type_13', array('class'=>'control-label col-xs-2')); ?>
+	<div class='col-xs-4'>
+		<?php echo form_input(array(
+			'name' => 'payment_type_13',
+			'id' => 'payment_type_13',
+			'class' => 'form-control input-sm',
+			'value' => $this->config->item('payment_type_13')
+		)); ?>
+	</div>
+</div>
+<div class="form-group form-group-sm">
+	<?php echo form_label('Payment Type 14', 'payment_type_14', array('class'=>'control-label col-xs-2')); ?>
+	<div class='col-xs-4'>
+		<?php echo form_input(array(
+			'name' => 'payment_type_14',
+			'id' => 'payment_type_14',
+			'class' => 'form-control input-sm',
+			'value' => $this->config->item('payment_type_14')
+		)); ?>
+	</div>
+</div>
+<div class="form-group form-group-sm">
+	<?php echo form_label('Payment Type 15', 'payment_type_15', array('class'=>'control-label col-xs-2')); ?>
+	<div class='col-xs-4'>
+		<?php echo form_input(array(
+			'name' => 'payment_type_15',
+			'id' => 'payment_type_15',
+			'class' => 'form-control input-sm',
+			'value' => $this->config->item('payment_type_15')
+		)); ?>
+	</div>
+</div>
+<div class="form-group form-group-sm">
+	<?php echo form_label('Payment Type 16', 'payment_type_16', array('class'=>'control-label col-xs-2')); ?>
+	<div class='col-xs-4'>
+		<?php echo form_input(array(
+			'name' => 'payment_type_16',
+			'id' => 'payment_type_16',
+			'class' => 'form-control input-sm',
+			'value' => $this->config->item('payment_type_16')
+		)); ?>
+	</div>
+</div>
+<div class="form-group form-group-sm">
+	<?php echo form_label('Payment Type 17', 'payment_type_17', array('class'=>'control-label col-xs-2')); ?>
+	<div class='col-xs-4'>
+		<?php echo form_input(array(
+			'name' => 'payment_type_17',
+			'id' => 'payment_type_17',
+			'class' => 'form-control input-sm',
+			'value' => $this->config->item('payment_type_17')
+		)); ?>
+	</div>
+</div>
+<div class="form-group form-group-sm">
+	<?php echo form_label('Payment Type 18', 'payment_type_18', array('class'=>'control-label col-xs-2')); ?>
+	<div class='col-xs-4'>
+		<?php echo form_input(array(
+			'name' => 'payment_type_18',
+			'id' => 'payment_type_18',
+			'class' => 'form-control input-sm',
+			'value' => $this->config->item('payment_type_18')
+		)); ?>
+	</div>
+</div>
+<div class="form-group form-group-sm">
+	<?php echo form_label('Payment Type 19', 'payment_type_19', array('class'=>'control-label col-xs-2')); ?>
+	<div class='col-xs-4'>
+		<?php echo form_input(array(
+			'name' => 'payment_type_19',
+			'id' => 'payment_type_19',
+			'class' => 'form-control input-sm',
+			'value' => $this->config->item('payment_type_19')
+		)); ?>
+	</div>
+</div>
+<div class="form-group form-group-sm">
+	<?php echo form_label('Payment Type 20', 'payment_type_20', array('class'=>'control-label col-xs-2')); ?>
+	<div class='col-xs-4'>
+		<?php echo form_input(array(
+			'name' => 'payment_type_20',
+			'id' => 'payment_type_20',
+			'class' => 'form-control input-sm',
+			'value' => $this->config->item('payment_type_20')
+		)); ?>
+	</div>
+</div>
+
 
 
 			<div class="form-group form-group-sm">
