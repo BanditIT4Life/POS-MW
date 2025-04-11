@@ -100,7 +100,7 @@
 										}
 
 										if (types.includes('administrative_area_level_1')) {
-											components.state = comp.long_name;
+											components.state = comp.short_name;
 										} else if (types.includes('postal_code')) {
 											components.postcode = comp.long_name;
 										} else if (types.includes('country')) {
