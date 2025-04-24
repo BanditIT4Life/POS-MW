@@ -37,7 +37,7 @@ public function generate_items()
             'description' => 'Auto-generated delivery slot',
             'category' => $category_name,
             'cost_price' => 0.00,
-            'unit_price' => 0.00,
+            'unit_price' => 59.99,
             'reorder_level' => 0,
             'receiving_quantity' => 1,
             'allow_alt_description' => 0,
