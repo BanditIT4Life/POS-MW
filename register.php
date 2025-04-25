@@ -1536,7 +1536,15 @@ document.getElementById('clearSpecificTime').addEventListener('click', function 
 </script>
 
 
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const itemQuery = params.get('item');
 
+  if (itemQuery) {
+    document.getElementById('item').value = itemQuery;
+    document.getElementById('add_item_form').submit();
+  }
+</script>
 
 
 
