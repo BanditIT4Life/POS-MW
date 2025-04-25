@@ -7,7 +7,8 @@ class Auto_delivery extends CI_Controller
     {
         parent::__construct();
         $this->load->model('Item');
-        $this->load->helper('date');
+        $this->load->model('Stock_location');
+	$this->load->helper('date');
         error_reporting(E_ALL);
         ini_set('display_errors', 1);
     }
@@ -37,7 +38,7 @@ public function generate_items()
             'description' => 'Auto-generated delivery slot',
             'category' => $category_name,
             'cost_price' => 0.00,
-            'unit_price' => 59.99,
+            'unit_price' => 0.00,
             'reorder_level' => 0,
             'receiving_quantity' => 1,
             'allow_alt_description' => 0,
@@ -74,11 +75,70 @@ $discount = 0.00;
 $description = '';
 $serial_number = '';
 
-$this->sale_lib->add_item($item_id, 1, $discount, $price, $description, $serial_number);
+
+
+
+
+
+
+
+
+
+// --- GET A VALID STOCK LOCATION ID SAFELY ---
+$default_location_id = 1;
+$location_check = $this->db
+    ->select('location_id')
+    ->from($this->db->dbprefix('stock_locations'))
+    ->where('location_id', $default_location_id)
+    ->where('deleted', 0)
+    ->get()
+    ->row();
+
+if ($location_check) {
+    $stock_location = $location_check->location_id;
+} else {
+    // fallback to ANY existing non-deleted location
+    $fallback = $this->db
+        ->select('location_id')
+        ->from($this->db->dbprefix('stock_locations'))
+        ->where('deleted', 0)
+        ->limit(1)
+        ->get()
+        ->row();
+
+    if ($fallback) {
+        $stock_location = $fallback->location_id;
+    } else {
+        echo "❌ No valid stock location exists.";
+        return;
+    }
+}
+
+// NOW safe to continue
+$this->sale_lib->set_sale_location($stock_location);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     // Redirect back to register
-    redirect(site_url('sales'));
+
+	redirect(site_url("sales?item={$item_id}")); 
 }
 
 
