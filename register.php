@@ -405,7 +405,7 @@ if(isset($success))
     <div class="modal-content">
 
       <div class="modal-header">
-        <h4 class="modal-title">Schedule Delivery or Pickup</h4>
+        <h4 class="modal-title">Schedule Delivery</h4>
       </div>
 
       <div class="modal-body">
@@ -478,10 +478,16 @@ if(isset($success))
         </form>
       </div>
 
-      <div class="modal-footer">
-        <button id="submitDeliveryBtn" type="button" class="btn btn-success">Submit</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-      </div>
+      <div class="modal-footer d-flex justify-content-between">
+  <!-- Left Side -->
+  <button id="submitBlankDeliveryBtn" type="button" class="btn btn-warning">Local Delivery</button>
+
+  <!-- Right Side -->
+  <div>
+    <button id="submitDeliveryBtn" type="button" class="btn btn-success">Submit</button>
+    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+  </div>
+</div>
 
     </div>
   </div>
@@ -569,10 +575,19 @@ if(isset($success))
         </form>
       </div>
 
-      <div class="modal-footer">
-        <button id="submitPickupOnlyBtn" type="button" class="btn btn-success">Submit</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-      </div>
+      <div class="modal-footer d-flex justify-content-between">
+  <!-- Left Side -->
+  <button id="submitBlankPickupBtn" type="button" class="btn btn-warning">In Store Pickup</button>
+
+  <!-- Right Side -->
+  <div>
+    <button id="submitPickupOnlyBtn" type="button" class="btn btn-success">Submit</button>
+    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+  </div>
+</div>
+
+
+
 
     </div>
   </div>
@@ -615,7 +630,7 @@ if(isset($success))
     <div class="modal-content">
 
       <div class="modal-header">
-        <h4 class="modal-title">Schedule Delivery or Pickup</h4>
+        <h4 class="modal-title">Schedule Delivery</h4>
       </div>
 
       <div class="modal-body">
@@ -625,7 +640,6 @@ if(isset($success))
             <label for="deliveryType">Type</label>
             <select class="form-control" id="deliveryType" name="type">
               <option value="Delivery">Delivery</option>
-              <option value="Pickup">Pickup</option>
             </select>
           </div>
 
@@ -688,10 +702,18 @@ if(isset($success))
         </form>
       </div>
 
-      <div class="modal-footer">
-        <button id="submitDeliveryBtn" type="button" class="btn btn-success">Submit</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-      </div>
+      <div class="modal-footer d-flex justify-content-between">
+  <!-- Left Side -->
+  <button id="submitBlankDeliveryBtn" type="button" class="btn btn-warning">Local Delivery</button>
+
+  <!-- Right Side -->
+  <div>
+    <button id="submitDeliveryBtn" type="button" class="btn btn-success">Submit</button>
+    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+  </div>
+</div>
+
+
 
     </div>
   </div>
@@ -781,10 +803,18 @@ if(isset($success))
         </form>
       </div>
 
-      <div class="modal-footer">
-        <button id="submitPickupOnlyBtn" type="button" class="btn btn-success">Submit</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-      </div>
+      <div class="modal-footer d-flex justify-content-between">
+  <!-- Left Side -->
+  <button id="submitBlankPickupBtn" type="button" class="btn btn-warning">In Store Pickup</button>
+
+  <!-- Right Side -->
+  <div>
+    <button id="submitPickupOnlyBtn" type="button" class="btn btn-success">Submit</button>
+    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+  </div>
+</div>
+
+
 
     </div>
   </div>
@@ -1544,6 +1574,37 @@ document.getElementById('clearSpecificTime').addEventListener('click', function 
     document.getElementById('item').value = itemQuery;
     document.getElementById('add_item_form').submit();
   }
+</script>
+
+
+<script>
+document.getElementById('submitBlankDeliveryBtn').addEventListener('click', function () {
+  const type = document.getElementById('deliveryType').value;
+
+  // Submit with blank placeholders
+  const formattedDate = ' ';
+  const finalTime = ' ';
+
+  const encodedTime = encodeURIComponent(finalTime);
+  const url = `<?php echo site_url('Auto_delivery/generate_items'); ?>?date_delivery=${formattedDate}&time_delivery=${encodedTime}`;
+
+  window.location.href = url;
+});
+</script>
+
+
+
+<script>
+document.getElementById('submitBlankPickupBtn').addEventListener('click', function () {
+  // Set type to pickup
+  const formattedDate = ' ';
+  const finalTime = ' ';
+
+  const encodedTime = encodeURIComponent(finalTime);
+  const url = `<?php echo site_url('Auto_pickup/generate_items'); ?>?date_delivery=${formattedDate}&time_delivery=${encodedTime}`;
+
+  window.location.href = url;
+});
 </script>
 
 
