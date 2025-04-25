@@ -430,6 +430,7 @@ if(isset($success))
             <!-- Time Slot Dropdown -->
             <select class="form-control mb-2" id="timeSlotSelect">
               <option value="">-- Select a Time Slot (Optional) --</option>
+              <option value="‎ ">-- No Time Selected --</option>
               <option>10:00AM - 11:00AM</option>
               <option>10:00AM - 12:00PM</option>
               <option>10:00AM - 1:00PM</option>
@@ -535,7 +536,8 @@ if(isset($success))
 
             <!-- Time Slot Dropdown -->
             <select class="form-control mb-2" id="pickupOnlySlot">
-              <option value="">-- Select a Time Slot (Optional) --</option>
+	      <option value="">-- Select a Time Slot (Optional) --</option>
+              <option value="‎ ">-- No Time Selected --</option>
               <option>10:00AM - 11:00AM</option>
               <option>10:00AM - 12:00PM</option>
               <option>10:00AM - 1:00PM</option>
@@ -672,6 +674,7 @@ if(isset($success))
             <!-- Time Slot Dropdown -->
             <select class="form-control mb-2" id="timeSlotSelect">
               <option value="">-- Select a Time Slot (Optional) --</option>
+              <option value="‎ ">-- No Time Selected --</option>
               <option>10:00AM - 11:00AM</option>
               <option>10:00AM - 12:00PM</option>
               <option>10:00AM - 1:00PM</option>
@@ -782,6 +785,7 @@ if(isset($success))
             <!-- Time Slot Dropdown -->
             <select class="form-control mb-2" id="pickupOnlySlot">
               <option value="">-- Select a Time Slot (Optional) --</option>
+              <option value="‎ ">-- No Time Selected --</option>
               <option>10:00AM - 11:00AM</option>
               <option>10:00AM - 12:00PM</option>
               <option>10:00AM - 1:00PM</option>
