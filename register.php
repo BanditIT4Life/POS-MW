@@ -415,7 +415,6 @@ if(isset($success))
             <label for="deliveryType">Type</label>
             <select class="form-control" id="deliveryType" name="type">
               <option value="Delivery">Delivery</option>
-              <option value="Pickup">Pickup</option>
             </select>
           </div>
 
