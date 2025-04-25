@@ -26,7 +26,7 @@ public function generate_items()
         return;
     }
 
-    $item_name = "Local Delivery - {$date_str} {$time_slot}";
+    $item_name = "Local Delivery   {$date_str} {$time_slot}";
 
     // Create category if not exists
     $this->ensure_category_exists($category_name);
@@ -38,7 +38,7 @@ public function generate_items()
             'description' => 'Auto-generated delivery slot',
             'category' => $category_name,
             'cost_price' => 0.00,
-            'unit_price' => 0.00,
+            'unit_price' => 59.99,
             'reorder_level' => 0,
             'receiving_quantity' => 1,
             'allow_alt_description' => 0,
