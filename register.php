@@ -429,7 +429,7 @@ if(isset($success))
 
             <!-- Time Slot Dropdown -->
             <select class="form-control mb-2" id="timeSlotSelect">
-              <option value="">-- Select a Time Slot (Optional) --</option>
+              <option value=" ">-- Select a Time Slot (Optional) --</option>
               <option>10:00AM - 11:00AM</option>
               <option>10:00AM - 12:00PM</option>
               <option>10:00AM - 1:00PM</option>
@@ -438,6 +438,7 @@ if(isset($success))
               <option>10:00AM - 4:00PM</option>
               <option>10:00AM - 5:00PM</option>
               <option>10:00AM - 6:00PM</option>
+              <option>10:00AM - 7:00PM</option>
               <option>11:00AM - 12:00PM</option>
               <option>11:00AM - 1:00PM</option>
               <option>11:00AM - 2:00PM</option>
@@ -445,27 +446,35 @@ if(isset($success))
               <option>11:00AM - 4:00PM</option>
               <option>11:00AM - 5:00PM</option>
               <option>11:00AM - 6:00PM</option>
+              <option>11:00AM - 7:00PM</option>
               <option>12:00PM - 1:00PM</option>
               <option>12:00PM - 2:00PM</option>
               <option>12:00PM - 3:00PM</option>
               <option>12:00PM - 4:00PM</option>
               <option>12:00PM - 5:00PM</option>
               <option>12:00PM - 6:00PM</option>
+              <option>12:00PM - 7:00PM</option>
               <option>1:00PM - 2:00PM</option>
               <option>1:00PM - 3:00PM</option>
               <option>1:00PM - 4:00PM</option>
               <option>1:00PM - 5:00PM</option>
               <option>1:00PM - 6:00PM</option>
+              <option>1:00PM - 7:00PM</option>
               <option>2:00PM - 3:00PM</option>
               <option>2:00PM - 4:00PM</option>
               <option>2:00PM - 5:00PM</option>
               <option>2:00PM - 6:00PM</option>
+              <option>2:00PM - 7:00PM</option>
               <option>3:00PM - 4:00PM</option>
               <option>3:00PM - 5:00PM</option>
               <option>3:00PM - 6:00PM</option>
+              <option>3:00PM - 7:00PM</option>
               <option>4:00PM - 5:00PM</option>
               <option>4:00PM - 6:00PM</option>
+              <option>4:00PM - 7:00PM</option>
               <option>5:00PM - 6:00PM</option>
+              <option>5:00PM - 7:00PM</option>
+              <option>6:00PM - 7:00PM</option>
             </select>
 
             <div class="text-center my-2">or</div>
@@ -526,7 +535,7 @@ if(isset($success))
 
             <!-- Time Slot Dropdown -->
             <select class="form-control mb-2" id="pickupOnlySlot">
-              <option value="">-- Select a Time Slot (Optional) --</option>
+              <option value=" ">-- Select a Time Slot (Optional) --</option>
               <option>10:00AM - 11:00AM</option>
               <option>10:00AM - 12:00PM</option>
               <option>10:00AM - 1:00PM</option>
@@ -535,6 +544,7 @@ if(isset($success))
               <option>10:00AM - 4:00PM</option>
               <option>10:00AM - 5:00PM</option>
               <option>10:00AM - 6:00PM</option>
+              <option>10:00AM - 7:00PM</option>
               <option>11:00AM - 12:00PM</option>
               <option>11:00AM - 1:00PM</option>
               <option>11:00AM - 2:00PM</option>
@@ -542,34 +552,42 @@ if(isset($success))
               <option>11:00AM - 4:00PM</option>
               <option>11:00AM - 5:00PM</option>
               <option>11:00AM - 6:00PM</option>
+              <option>11:00AM - 7:00PM</option>
               <option>12:00PM - 1:00PM</option>
               <option>12:00PM - 2:00PM</option>
               <option>12:00PM - 3:00PM</option>
               <option>12:00PM - 4:00PM</option>
               <option>12:00PM - 5:00PM</option>
               <option>12:00PM - 6:00PM</option>
+              <option>12:00PM - 7:00PM</option>
               <option>1:00PM - 2:00PM</option>
               <option>1:00PM - 3:00PM</option>
               <option>1:00PM - 4:00PM</option>
               <option>1:00PM - 5:00PM</option>
               <option>1:00PM - 6:00PM</option>
+              <option>1:00PM - 7:00PM</option>
               <option>2:00PM - 3:00PM</option>
               <option>2:00PM - 4:00PM</option>
               <option>2:00PM - 5:00PM</option>
               <option>2:00PM - 6:00PM</option>
+              <option>2:00PM - 7:00PM</option>
               <option>3:00PM - 4:00PM</option>
               <option>3:00PM - 5:00PM</option>
               <option>3:00PM - 6:00PM</option>
+              <option>3:00PM - 7:00PM</option>
               <option>4:00PM - 5:00PM</option>
               <option>4:00PM - 6:00PM</option>
+              <option>4:00PM - 7:00PM</option>
               <option>5:00PM - 6:00PM</option>
+              <option>5:00PM - 7:00PM</option>
+              <option>6:00PM - 7:00PM</option>
             </select>
 
             <div class="text-center my-2">or</div>
 
             <!-- Specific Time Picker -->
             <input type="time" class="form-control mb-2" id="pickupOnlySpecific" onclick="this.showPicker()">
-            <button type="button" class="btn btn-link p-0" id="clearPickupSpecific">Clear Specific Time</button>
+            
           </div>
         </form>
       </div>
@@ -653,7 +671,7 @@ if(isset($success))
 
             <!-- Time Slot Dropdown -->
             <select class="form-control mb-2" id="timeSlotSelect">
-              <option value="">-- Select a Time Slot (Optional) --</option>
+              <option value=" ">-- Select a Time Slot (Optional) --</option>
               <option>10:00AM - 11:00AM</option>
               <option>10:00AM - 12:00PM</option>
               <option>10:00AM - 1:00PM</option>
@@ -662,6 +680,7 @@ if(isset($success))
               <option>10:00AM - 4:00PM</option>
               <option>10:00AM - 5:00PM</option>
               <option>10:00AM - 6:00PM</option>
+              <option>10:00AM - 7:00PM</option>
               <option>11:00AM - 12:00PM</option>
               <option>11:00AM - 1:00PM</option>
               <option>11:00AM - 2:00PM</option>
@@ -669,27 +688,35 @@ if(isset($success))
               <option>11:00AM - 4:00PM</option>
               <option>11:00AM - 5:00PM</option>
               <option>11:00AM - 6:00PM</option>
+              <option>11:00AM - 7:00PM</option>
               <option>12:00PM - 1:00PM</option>
               <option>12:00PM - 2:00PM</option>
               <option>12:00PM - 3:00PM</option>
               <option>12:00PM - 4:00PM</option>
               <option>12:00PM - 5:00PM</option>
               <option>12:00PM - 6:00PM</option>
+              <option>12:00PM - 7:00PM</option>
               <option>1:00PM - 2:00PM</option>
               <option>1:00PM - 3:00PM</option>
               <option>1:00PM - 4:00PM</option>
               <option>1:00PM - 5:00PM</option>
               <option>1:00PM - 6:00PM</option>
+              <option>1:00PM - 7:00PM</option>
               <option>2:00PM - 3:00PM</option>
               <option>2:00PM - 4:00PM</option>
               <option>2:00PM - 5:00PM</option>
               <option>2:00PM - 6:00PM</option>
+              <option>2:00PM - 7:00PM</option>
               <option>3:00PM - 4:00PM</option>
               <option>3:00PM - 5:00PM</option>
               <option>3:00PM - 6:00PM</option>
+              <option>3:00PM - 7:00PM</option>
               <option>4:00PM - 5:00PM</option>
               <option>4:00PM - 6:00PM</option>
+              <option>4:00PM - 7:00PM</option>
               <option>5:00PM - 6:00PM</option>
+              <option>5:00PM - 7:00PM</option>
+              <option>6:00PM - 7:00PM</option>
             </select>
 
             <div class="text-center my-2">or</div>
@@ -754,7 +781,7 @@ if(isset($success))
 
             <!-- Time Slot Dropdown -->
             <select class="form-control mb-2" id="pickupOnlySlot">
-              <option value="">-- Select a Time Slot (Optional) --</option>
+              <option value=" ">-- Select a Time Slot (Optional) --</option>
               <option>10:00AM - 11:00AM</option>
               <option>10:00AM - 12:00PM</option>
               <option>10:00AM - 1:00PM</option>
@@ -763,6 +790,7 @@ if(isset($success))
               <option>10:00AM - 4:00PM</option>
               <option>10:00AM - 5:00PM</option>
               <option>10:00AM - 6:00PM</option>
+              <option>10:00AM - 7:00PM</option>
               <option>11:00AM - 12:00PM</option>
               <option>11:00AM - 1:00PM</option>
               <option>11:00AM - 2:00PM</option>
@@ -770,34 +798,42 @@ if(isset($success))
               <option>11:00AM - 4:00PM</option>
               <option>11:00AM - 5:00PM</option>
               <option>11:00AM - 6:00PM</option>
+              <option>11:00AM - 7:00PM</option>
               <option>12:00PM - 1:00PM</option>
               <option>12:00PM - 2:00PM</option>
               <option>12:00PM - 3:00PM</option>
               <option>12:00PM - 4:00PM</option>
               <option>12:00PM - 5:00PM</option>
               <option>12:00PM - 6:00PM</option>
+              <option>12:00PM - 7:00PM</option>
               <option>1:00PM - 2:00PM</option>
               <option>1:00PM - 3:00PM</option>
               <option>1:00PM - 4:00PM</option>
               <option>1:00PM - 5:00PM</option>
               <option>1:00PM - 6:00PM</option>
+              <option>1:00PM - 7:00PM</option>
               <option>2:00PM - 3:00PM</option>
               <option>2:00PM - 4:00PM</option>
               <option>2:00PM - 5:00PM</option>
               <option>2:00PM - 6:00PM</option>
+              <option>2:00PM - 7:00PM</option>
               <option>3:00PM - 4:00PM</option>
               <option>3:00PM - 5:00PM</option>
               <option>3:00PM - 6:00PM</option>
+              <option>3:00PM - 7:00PM</option>
               <option>4:00PM - 5:00PM</option>
               <option>4:00PM - 6:00PM</option>
+              <option>4:00PM - 7:00PM</option>
               <option>5:00PM - 6:00PM</option>
+              <option>5:00PM - 7:00PM</option>
+              <option>6:00PM - 7:00PM</option>
             </select>
 
             <div class="text-center my-2">or</div>
 
             <!-- Specific Time Picker -->
             <input type="time" class="form-control mb-2" id="pickupOnlySpecific" onclick="this.showPicker()">
-            <button type="button" class="btn btn-link p-0" id="clearPickupSpecific">Clear Specific Time</button>
+
           </div>
         </form>
       </div>
