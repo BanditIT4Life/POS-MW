@@ -7,6 +7,7 @@ class Auto_pickup extends CI_Controller
     {
         parent::__construct();
         $this->load->model('Item');
+        $this->load->model('Stock_location');
         $this->load->helper('date');
         $this->load->library('sale_lib');
         error_reporting(E_ALL);
@@ -75,9 +76,69 @@ class Auto_pickup extends CI_Controller
         $description = '';
         $serial_number = '';
 
-        $this->sale_lib->add_item($item_id, 1, $discount, $price, $description, $serial_number);
+        // ✅ Get a valid stock location
+        $default_location_id = 1;
+        $location_check = $this->db
+            ->select('location_id')
+            ->from($this->db->dbprefix('stock_locations'))
+            ->where('location_id', $default_location_id)
+            ->where('deleted', 0)
+            ->get()
+            ->row();
 
-        redirect(site_url('sales'));
+        if ($location_check) {
+            $stock_location = $location_check->location_id;
+        } else {
+            $fallback = $this->db
+                ->select('location_id')
+                ->from($this->db->dbprefix('stock_locations'))
+                ->where('deleted', 0)
+                ->limit(1)
+                ->get()
+                ->row();
+
+            if ($fallback) {
+                $stock_location = $fallback->location_id;
+            } else {
+                echo "❌ No valid stock location exists.";
+                return;
+            }
+        }
+
+// --- GET A VALID STOCK LOCATION ID SAFELY ---
+$default_location_id = 1;
+$location_check = $this->db
+    ->select('location_id')
+    ->from($this->db->dbprefix('stock_locations'))
+    ->where('location_id', $default_location_id)
+    ->where('deleted', 0)
+    ->get()
+    ->row();
+
+if ($location_check) {
+    $stock_location = $location_check->location_id;
+} else {
+    // fallback to ANY existing non-deleted location
+    $fallback = $this->db
+        ->select('location_id')
+        ->from($this->db->dbprefix('stock_locations'))
+        ->where('deleted', 0)
+        ->limit(1)
+        ->get()
+        ->row();
+
+    if ($fallback) {
+        $stock_location = $fallback->location_id;
+    } else {
+        echo "❌ No valid stock location exists.";
+        return;
+    }
+}
+
+
+// Redirect back to register
+
+	redirect(site_url("sales?item={$item_id}"));
     }
 }
 ?>
