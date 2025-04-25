@@ -26,7 +26,7 @@ class Auto_pickup extends CI_Controller
             return;
         }
 
-        $item_name = "In Store Pickup - {$date_str} {$time_slot}";
+        $item_name = "In Store Pickup  {$date_str} {$time_slot}";
 
         // Ensure category exists
         $this->db->from('items');
@@ -142,3 +142,4 @@ if ($location_check) {
     }
 }
 ?>
+
