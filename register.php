@@ -1463,7 +1463,7 @@ document.getElementById('submitDeliveryBtn').addEventListener('click', function 
   const specificTime = document.getElementById('specificTime').value;
 
   if (!date || (!timeSlot && !specificTime)) {
-    alert("Please select both a date and a time slot or a specific time.");
+    alert("Please select a date.");
     return;
   }
 
@@ -1539,7 +1539,7 @@ document.getElementById('clearSpecificTime').addEventListener('click', function 
     const specificTime = pickupTime.value;
 
     if (!date || (!timeSlot && !specificTime)) {
-      alert("Please select both a date and a time slot or a specific time.");
+      alert("Please select a date.");
       return;
     }
 
