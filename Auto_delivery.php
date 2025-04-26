@@ -58,6 +58,9 @@ public function generate_items()
     // Get the item ID after save
     $item_id = $this->Item->get_item_id_by_name($item_name);
 
+$this->db->where('item_id', $item_id);
+$this->db->update('items', ['deleted' => 0]);
+
     // Add item to cart session
     $cart_item = array(
         'item_id' => $item_id,
