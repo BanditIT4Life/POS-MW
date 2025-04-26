@@ -70,6 +70,9 @@ class Auto_pickup extends CI_Controller
         }
 
         $item_id = $this->Item->get_item_id_by_name($item_name);
+        
+        $this->db->where('item_id', $item_id);
+        $this->db->update('items', ['deleted' => 0]);
 
         $price = 0.00;
         $discount = 0.00;
