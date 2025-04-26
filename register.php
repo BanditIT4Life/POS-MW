@@ -56,24 +56,82 @@ if(isset($success))
 				?>
 
 				<li class="pull-right">
-					<button class='btn btn-default btn-sm modal-dlg' id='show_suspended_sales_button' data-href="<?php echo site_url($controller_name."/suspended"); ?>"
-							title="<?php echo $this->lang->line('sales_suspended_sales'); ?>">
-						<span class="glyphicon glyphicon-align-justify">&nbsp</span><?php echo $this->lang->line('sales_suspended_sales'); ?>
-					</button>
-				</li>
+    <button class='btn btn-default btn-sm modal-dlg' id='show_suspended_sales_button' data-href="<?php echo site_url($controller_name."/suspended"); ?>" title="<?php echo $this->lang->line('sales_suspended_sales'); ?>">
+        <span class="glyphicon glyphicon-align-justify">&nbsp;</span><?php echo $this->lang->line('sales_suspended_sales'); ?>
+    </button>
+</li>
 
-				<?php
-				if($this->Employee->has_grant('reports_sales', $this->session->userdata('person_id')))
-				{
-				?>
-					<li class="pull-right">
-						<?php echo anchor($controller_name."/manage", '<span class="glyphicon glyphicon-list-alt">&nbsp</span>' . $this->lang->line('sales_takings'),
-									array('class'=>'btn btn-primary btn-sm', 'id'=>'sales_takings_button', 'title'=>$this->lang->line('sales_takings'))); ?>
-					</li>
-				<?php
-				}
-				?>
+<?php if($this->Employee->has_grant('reports_sales', $this->session->userdata('person_id'))) { ?>
+<li class="pull-right">
+    <a href="<?php echo site_url($controller_name."/manage"); ?>" class="btn btn-primary btn-sm" id="sales_takings_button" title="<?php echo $this->lang->line('sales_takings'); ?>">
+        <span class="glyphicon glyphicon-list-alt">&nbsp;</span><?php echo $this->lang->line('sales_takings'); ?>
+    </a>
+</li>
+<?php } ?>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 📦 NEW Delivery Report Button -->
+<li class="pull-right">
+    <a href="<?php echo site_url('delivery_report'); ?>" class="btn btn-info btn-sm" id="delivery_report_button" title="View Delivery Report">
+        <span class="glyphicon glyphicon-road">&nbsp;</span>Delivery Report
+    </a>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
 			</ul>
 		</div>
 	<?php echo form_close(); ?>
@@ -394,6 +452,28 @@ if(isset($success))
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <!-- Delivery/Pickup Button -->
 <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#deliveryPickupModal">
   <span class="glyphicon glyphicon-send"></span> Delivery
@@ -501,6 +581,32 @@ if(isset($success))
     </div>
   </div>
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -605,9 +711,6 @@ if(isset($success))
   </div>
 </div>
 
-
-
-
     </div>
   </div>
 </div>
@@ -629,6 +732,33 @@ if(isset($success))
 							title="<?php echo $this->lang->line($controller_name. '_new_customer'); ?>">
 						<span class="glyphicon glyphicon-user">&nbsp</span><?php echo $this->lang->line($controller_name. '_new_customer'); ?>
 					</button>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -753,6 +883,36 @@ if(isset($success))
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <!-- Pickup Button (Defaults to Pickup, uses Auto_pickup controller) -->
 <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#pickupOnlyModal">
   <span class="glyphicon glyphicon-road"></span> Pickup
@@ -853,11 +1013,33 @@ if(isset($success))
   </div>
 </div>
 
-
-
     </div>
   </div>
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1459,6 +1641,43 @@ document.body.onkeyup = function(e)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <script>
 document.getElementById('submitDeliveryBtn').addEventListener('click', function () {
   const type = document.getElementById('deliveryType').value;
@@ -1645,6 +1864,34 @@ document.getElementById('submitBlankPickupBtn').addEventListener('click', functi
   window.location.href = url;
 });
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
