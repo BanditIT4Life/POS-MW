@@ -476,7 +476,7 @@ if(isset($success))
 
 <!-- Delivery/Pickup Button -->
 <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#deliveryPickupModal">
-  <span class="glyphicon glyphicon-send"></span> Delivery
+  <span class="glyphicon glyphicon-road"></span> Delivery
 </button>
 
 <!-- Delivery/Pickup Modal -->
@@ -770,7 +770,7 @@ if(isset($success))
 
 <!-- Delivery/Pickup Button -->
 <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#deliveryPickupModal">
-  <span class="glyphicon glyphicon-send"></span> Delivery
+  <span class="glyphicon glyphicon-road"></span> Delivery
 </button>
 
 <!-- Delivery/Pickup Modal -->
