@@ -191,25 +191,28 @@ $("#sale_daterangepicker").daterangepicker({
             html += '<thead><tr><th>Sale ID</th><th>Item Name</th><th>Customer Name</th><th>Phone Number</th><th>Address 1</th><th>City</th><th>State</th><th>Postal Code</th><th>Date</th></tr></thead><tbody>';
 
             deliveries.forEach(function(delivery) {
-                html += '<tr>';
-                html += '<td>' + delivery.sale_id + '</td>';
-                html += '<td>' + (delivery.item_name || '') + '</td>';
-                html += '<td>' + (delivery.customer_name || '') + '</td>';
-                html += '<td>' + (delivery.phone_number || '') + '</td>';
-                html += '<td>' + (delivery.address_1 || '') + '</td>';
-                html += '<td>' + (delivery.city || '') + '</td>';
-                html += '<td>' + (delivery.state || '') + '</td>';
-                html += '<td>' + (delivery.postal_code || '') + '</td>';
-                html += '<td>' + delivery.sale_time + '</td>';
-                html += '</tr>';
-            });
+    html += '<tr>';
+    html += '<td>' + delivery.sale_id + '</td>';
+    html += '<td>' + (delivery.item_name || '') + '</td>';
+    html += '<td>' + (delivery.customer_name || '') + '</td>';
+    html += '<td>' + (delivery.phone_number || '') + '</td>';
+    html += '<td>' + (delivery.address_1 || '') + '</td>';
+    html += '<td>' + (delivery.city || '') + '</td>';
+    html += '<td>' + (delivery.state || '') + '</td>';
+    html += '<td>' + (delivery.postal_code || '') + '</td>';
+    html += '<td>' + delivery.sale_time + '</td>';
+    html += '<td><a href="<?php echo site_url('sales/receipt'); ?>/' + delivery.sale_id + '" target="_blank" title="View Receipt"><span class="glyphicon glyphicon-usd"></span></a></td>';
+    html += '</tr>';
+});
+
+
 
             html += '</tbody></table>';
             $('#table_holder').html(html);
         });
     }
 
-    // 📅 Set Default: Delivery Date Range = Today
+    // ðŸ“… Set Default: Delivery Date Range = Today
     var today = moment().format('YYYY-MM-DD');
     $("#delivery_daterangepicker").data('daterangepicker').setStartDate(today);
     $("#delivery_daterangepicker").data('daterangepicker').setEndDate(today);
