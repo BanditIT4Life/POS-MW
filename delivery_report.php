@@ -1,7 +1,7 @@
 <?php $this->load->view("partial/header"); ?>
 
 <div id="page_title" class="text-center">
-    <h1><?php echo $this->lang->line('reports_delivery_report'); ?></h1>
+    <h1>Delivery Report</h1>
 </div>
 
 <div class="row" style="margin-bottom: 20px;">
