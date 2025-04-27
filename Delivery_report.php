@@ -41,9 +41,20 @@ public function get_data()
     $local_delivery_from_date = $this->input->get('local_delivery_from_date');
     $local_delivery_to_date = $this->input->get('local_delivery_to_date');
 
+    $limit = $this->input->get('limit') ?? 25; // Default 25
+    $offset = $this->input->get('offset') ?? 0; // Default 0
+
     $sales = $this->Sale->get_delivery_sales($from_date, $to_date, $delivery_from_date, $delivery_to_date, $local_delivery_from_date, $local_delivery_to_date);
-    echo json_encode($sales);
+
+    $total = count($sales); // Total records before slicing
+    $paged_sales = array_slice($sales, $offset, $limit); // Only return limited slice
+
+    echo json_encode([
+        'sales' => $paged_sales,
+        'total' => $total
+    ]);
 }
+
 
 
 }
