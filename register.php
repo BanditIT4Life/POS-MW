@@ -55,12 +55,6 @@ if(isset($success))
 				}
 				?>
 
-				<li class="pull-right">
-    <button class='btn btn-default btn-sm modal-dlg' id='show_suspended_sales_button' data-href="<?php echo site_url($controller_name."/suspended"); ?>" title="<?php echo $this->lang->line('sales_suspended_sales'); ?>">
-        <span class="glyphicon glyphicon-align-justify">&nbsp;</span><?php echo $this->lang->line('sales_suspended_sales'); ?>
-    </button>
-</li>
-
 <?php if($this->Employee->has_grant('reports_sales', $this->session->userdata('person_id'))) { ?>
 <li class="pull-right">
     <a href="<?php echo site_url($controller_name."/manage"); ?>" class="btn btn-primary btn-sm" id="sales_takings_button" title="<?php echo $this->lang->line('sales_takings'); ?>">
