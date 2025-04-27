@@ -1,7 +1,7 @@
 <?php $this->load->view("partial/header"); ?>
 
-<div id="page_title" style="text-align: left; margin-bottom: 20px;">
-    <h3 style="margin: 0;">Delivery Report</h3>
+<div id="page_title" class="text-center">
+    <h1>Delivery Report</h1>
 </div>
 
 <div class="row" style="margin-bottom: 20px;">
@@ -25,6 +25,22 @@
 
 <div id="table_holder"></div>
 
+<div class="row" style="margin-top: 20px;">
+    <div class="col-md-6">
+        <label>Results Per Page:</label>
+        <select id="results_per_page" class="form-control input-sm" style="width: auto; display: inline;">
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
+    </div>
+    <div class="col-md-6 text-right">
+        <button id="prev_page" class="btn btn-default btn-sm">Previous</button>
+        <span id="page_info" style="margin: 0 10px;">Page 1</span>
+        <button id="next_page" class="btn btn-default btn-sm">Next</button>
+    </div>
+</div>
+
 <script type="text/javascript">
 $(document).ready(function()
 {
@@ -36,6 +52,9 @@ $(document).ready(function()
     var delivery_end_date = '';
     var local_delivery_start_date = '';
     var local_delivery_end_date = '';
+    var current_page = 1;
+    var results_per_page = 25;
+    var total_records = 0;
 
     function disable_others(active)
     {
@@ -92,6 +111,7 @@ $("#sale_daterangepicker").daterangepicker({
         sale_end_date = picker.endDate.format('YYYY-MM-DD');
         $(this).val(sale_start_date + ' - ' + sale_end_date);
         disable_others('sale');
+        current_page = 1;
         loadTable();
     }).on('cancel.daterangepicker', function(ev, picker) {
         sale_start_date = '';
@@ -129,6 +149,7 @@ $("#sale_daterangepicker").daterangepicker({
         delivery_end_date = picker.endDate.format('YYYY-MM-DD');
         $(this).val(delivery_start_date + ' - ' + delivery_end_date);
         disable_others('delivery');
+        current_page = 1;
         loadTable();
     }).on('cancel.daterangepicker', function(ev, picker) {
         delivery_start_date = '';
@@ -166,6 +187,7 @@ $("#sale_daterangepicker").daterangepicker({
         local_delivery_end_date = picker.endDate.format('YYYY-MM-DD');
         $(this).val(local_delivery_start_date + ' - ' + local_delivery_end_date);
         disable_others('local_delivery');
+        current_page = 1;
         loadTable();
     }).on('cancel.daterangepicker', function(ev, picker) {
         local_delivery_start_date = '';
@@ -176,41 +198,55 @@ $("#sale_daterangepicker").daterangepicker({
     });
 
     function loadTable()
+{
+    var offset = (current_page - 1) * results_per_page;
+
+    $.get('<?php echo site_url('delivery_report/get_data'); ?>', {
+        from_date: sale_start_date,
+        to_date: sale_end_date,
+        delivery_from_date: delivery_start_date,
+        delivery_to_date: delivery_end_date,
+        local_delivery_from_date: local_delivery_start_date,
+        local_delivery_to_date: local_delivery_end_date,
+        limit: results_per_page,
+        offset: offset
+    }, function(data)
     {
-        $.get('<?php echo site_url('delivery_report/get_data'); ?>', {
-            from_date: sale_start_date,
-            to_date: sale_end_date,
-            delivery_from_date: delivery_start_date,
-            delivery_to_date: delivery_end_date,
-            local_delivery_from_date: local_delivery_start_date,
-            local_delivery_to_date: local_delivery_end_date
-        }, function(data)
-        {
-            var deliveries = JSON.parse(data);
-            var html = '<table class="table table-striped table-bordered">';
-            html += '<thead><tr><th>Sale ID</th><th>Item Name</th><th>Customer Name</th><th>Phone Number</th><th>Address 1</th><th>City</th><th>State</th><th>Postal Code</th><th>Date</th></tr></thead><tbody>';
+        var parsedData = JSON.parse(data);
+        var deliveries = parsedData.sales;
+        total_records = parsedData.total;
 
-            deliveries.forEach(function(delivery) {
-    html += '<tr>';
-    html += '<td>' + delivery.sale_id + '</td>';
-    html += '<td>' + (delivery.item_name || '') + '</td>';
-    html += '<td>' + (delivery.customer_name || '') + '</td>';
-    html += '<td>' + (delivery.phone_number || '') + '</td>';
-    html += '<td>' + (delivery.address_1 || '') + '</td>';
-    html += '<td>' + (delivery.city || '') + '</td>';
-    html += '<td>' + (delivery.state || '') + '</td>';
-    html += '<td>' + (delivery.postal_code || '') + '</td>';
-    html += '<td>' + delivery.sale_time + '</td>';
-    html += '<td><a href="<?php echo site_url('sales/receipt'); ?>/' + delivery.sale_id + '" target="_blank" title="View Receipt"><span class="glyphicon glyphicon-usd"></span></a></td>';
-    html += '</tr>';
-});
+        var html = '<table class="table table-striped table-bordered">';
+        html += '<thead><tr><th>Sale ID</th><th>Item Name</th><th>Customer Name</th><th>Phone Number</th><th>Address 1</th><th>City</th><th>State</th><th>Postal Code</th><th>Date</th><th>Receipt</th></tr></thead><tbody>';
 
-
-
-            html += '</tbody></table>';
-            $('#table_holder').html(html);
+        deliveries.forEach(function(delivery) {
+            html += '<tr>';
+            html += '<td>' + delivery.sale_id + '</td>';
+            html += '<td>' + (delivery.item_name || '') + '</td>';
+            html += '<td>' + (delivery.customer_name || '') + '</td>';
+            html += '<td>' + (delivery.phone_number || '') + '</td>';
+            html += '<td>' + (delivery.address_1 || '') + '</td>';
+            html += '<td>' + (delivery.city || '') + '</td>';
+            html += '<td>' + (delivery.state || '') + '</td>';
+            html += '<td>' + (delivery.postal_code || '') + '</td>';
+            html += '<td>' + delivery.sale_time + '</td>';
+            html += '<td><a href="<?php echo site_url('sales/receipt'); ?>/' + delivery.sale_id + '" target="_blank" title="View Receipt"><span class="glyphicon glyphicon-usd"></span></a></td>';
+            html += '</tr>';
         });
-    }
+
+        html += '</tbody></table>';
+        $('#table_holder').html(html);
+
+        // Update page info
+        var total_pages = Math.ceil(total_records / results_per_page);
+        $("#page_info").text("Page " + current_page + " of " + total_pages);
+
+        // Disable/Enable Prev/Next
+        $("#prev_page").prop('disabled', current_page === 1);
+        $("#next_page").prop('disabled', current_page >= total_pages);
+    });
+}
+
 
     // ðŸ“… Set Default: Delivery Date Range = Today
     var today = moment().format('YYYY-MM-DD');
@@ -223,6 +259,28 @@ $("#sale_daterangepicker").daterangepicker({
     $("#local_delivery_daterangepicker").prop('disabled', true);
 
     loadTable();
+    
+    $("#results_per_page").on('change', function() {
+    results_per_page = parseInt($(this).val());
+    current_page = 1; // Reset to first page
+    loadTable();
+});
+
+$("#prev_page").click(function() {
+    if (current_page > 1) {
+        current_page--;
+        loadTable();
+    }
+});
+
+$("#next_page").click(function() {
+    var total_pages = Math.ceil(total_records / results_per_page);
+    if (current_page < total_pages) {
+        current_page++;
+        loadTable();
+    }
+});
+
 });
 
 </script>
