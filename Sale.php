@@ -1444,34 +1444,7 @@ class Sale extends CI_Model
 		}
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
+//---------Delivery Report Page---------//
 public function get_delivery_sales($from_date = '', $to_date = '', $delivery_from_date = '', $delivery_to_date = '', $local_delivery_from_date = '', $local_delivery_to_date = '')
 {
     $this->db->select('
@@ -1505,38 +1478,9 @@ public function get_delivery_sales($from_date = '', $to_date = '', $delivery_fro
 
         $add_to_results = false;
 
-        if (!empty($from_date) && !empty($to_date))
+        if (!empty($local_delivery_from_date) && !empty($local_delivery_to_date))
         {
-            // 🟰 Sale Date Range logic
-            $sale_date_only = date('Y-m-d', strtotime($sale_time));
-
-            if ($sale_date_only >= $from_date && $sale_date_only <= $to_date)
-            {
-                $add_to_results = true;
-            }
-        }
-        else if (!empty($delivery_from_date) && !empty($delivery_to_date))
-        {
-            // 🟰 Delivery Date Range logic using Regex
-            if (preg_match('/\d{2}\/\d{2}\/\d{4}/', $item_name, $matches))
-            {
-                $delivery_date_raw = $matches[0]; // first MM/DD/YYYY found
-                $delivery_date_obj = DateTime::createFromFormat('m/d/Y', $delivery_date_raw);
-
-                if ($delivery_date_obj)
-                {
-                    $delivery_date_formatted = $delivery_date_obj->format('Y-m-d');
-
-                    if ($delivery_date_formatted >= $delivery_from_date && $delivery_date_formatted <= $delivery_to_date)
-                    {
-                        $add_to_results = true;
-                    }
-                }
-            }
-        }
-        else if (!empty($local_delivery_from_date) && !empty($local_delivery_to_date))
-        {
-            // 🟰 Local Delivery Only logic
+            // 📦 Local Delivery Only logic: exact match
             if (trim($item_name) === "Local Delivery")
             {
                 $sale_date_only = date('Y-m-d', strtotime($sale_time));
@@ -1548,8 +1492,45 @@ public function get_delivery_sales($from_date = '', $to_date = '', $delivery_fro
         }
         else
         {
-            // No filters applied
-            $add_to_results = true;
+            // 🛻 Sale Date Range and Delivery Date Range logic: must contain "Local Delivery" somewhere
+            if (stripos($item_name, 'Local Delivery') === false)
+            {
+                continue; // Skip if not related to Local Delivery
+            }
+
+            if (!empty($from_date) && !empty($to_date))
+            {
+                // 🗓️ Sale Date Range
+                $sale_date_only = date('Y-m-d', strtotime($sale_time));
+                if ($sale_date_only >= $from_date && $sale_date_only <= $to_date)
+                {
+                    $add_to_results = true;
+                }
+            }
+            else if (!empty($delivery_from_date) && !empty($delivery_to_date))
+            {
+                // 🗓️ Delivery Date Range based on date in item name
+                if (preg_match('/\d{2}\/\d{2}\/\d{4}/', $item_name, $matches))
+                {
+                    $delivery_date_raw = $matches[0]; // first MM/DD/YYYY found
+                    $delivery_date_obj = DateTime::createFromFormat('m/d/Y', $delivery_date_raw);
+
+                    if ($delivery_date_obj)
+                    {
+                        $delivery_date_formatted = $delivery_date_obj->format('Y-m-d');
+
+                        if ($delivery_date_formatted >= $delivery_from_date && $delivery_date_formatted <= $delivery_to_date)
+                        {
+                            $add_to_results = true;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // 🛑 No filters at all (unlikely, but safe fallback)
+                $add_to_results = true;
+            }
         }
 
         if ($add_to_results)
@@ -1560,13 +1541,6 @@ public function get_delivery_sales($from_date = '', $to_date = '', $delivery_fro
 
     return $final_results;
 }
-
-
-
-
-
-
-
 
 
 
