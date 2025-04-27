@@ -872,28 +872,39 @@ class Sales extends Secure_Controller
 			$data['last_name'] = $customer_info->last_name;
 			$data['customer_email'] = $customer_info->email;
 			$data['customer_address'] = $customer_info->address_1;
-$location_parts = [];
+$location_line = '';
 
 if (!empty($customer_info->city)) {
-        $location_parts[] = $customer_info->city;
+    $location_line .= $customer_info->city;
 }
+
 if (!empty($customer_info->state)) {
-        $location_parts[] = $customer_info->state;
+    if (!empty($location_line)) {
+        $location_line .= ', ';
+    }
+    $location_line .= $customer_info->state;
 }
+
 if (!empty($customer_info->zip)) {
-        $location_parts[] = $customer_info->zip;
+    if (!empty($customer_info->state)) {
+        $location_line .= ' ' . $customer_info->zip;
+    } else {
+        if (!empty($location_line)) {
+            $location_line .= ' ';
+        }
+        $location_line .= $customer_info->zip;
+    }
 }
 
-$location_line = implode(', ', array_filter($location_parts));
-
+// Then build the final customer_location
 if (!empty($location_line) && !empty($customer_info->phone_number)) {
-        $data['customer_location'] = $location_line . "\n" . $customer_info->phone_number;
+    $data['customer_location'] = $location_line . "\n" . $customer_info->phone_number;
 } elseif (!empty($location_line)) {
-        $data['customer_location'] = $location_line;
+    $data['customer_location'] = $location_line;
 } elseif (!empty($customer_info->phone_number)) {
-        $data['customer_location'] = $customer_info->phone_number;
+    $data['customer_location'] = $customer_info->phone_number;
 } else {
-        $data['customer_location'] = '';
+    $data['customer_location'] = '';
 }
 
 			$data['customer_account_number'] = $customer_info->account_number;
