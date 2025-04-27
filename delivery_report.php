@@ -1,7 +1,7 @@
 <?php $this->load->view("partial/header"); ?>
 
-<div id="page_title" class="text-center">
-    <h1>Delivery Report</h1>
+<div id="page_title" style="text-align: left; margin-bottom: 20px;">
+    <h3 style="margin: 0;">Delivery Report</h3>
 </div>
 
 <div class="row" style="margin-bottom: 20px;">
