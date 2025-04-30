@@ -1,5 +1,22 @@
 <?php $this->load->view("partial/header"); ?>
 
+<div style="text-align: center;">
+    <ul class="nav nav-tabs module-tabs" style="display: inline-block; padding: 0;">
+        <li style="display: inline-block; text-align: center; margin: 0 10px;">
+            <a href="<?php echo site_url('home'); ?>" style="display: block;">
+                <img src="<?php echo base_url('images/menubar/home.png'); ?>" alt="Home" class="module-icon" />
+                <div>Home</div>
+            </a>
+        </li>
+        <li style="display: inline-block; text-align: center; margin: 0 10px;">
+            <a href="<?php echo site_url('sales'); ?>" style="display: block;">
+                <img src="<?php echo base_url('images/menubar/sales.png'); ?>" alt="Sales" class="module-icon" />
+                <div><?php echo $this->lang->line('module_sales'); ?></div>
+            </a>
+        </li>
+    </ul>
+</div>
+
 <div id="page_title" style="text-align: left; margin-bottom: 20px;">
     <h3 style="margin: 0;">Delivery Report</h3>
 </div>
