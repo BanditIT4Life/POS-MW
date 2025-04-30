@@ -780,12 +780,13 @@ if(isset($success))
       <div class="modal-body">
         <form id="deliveryPickupForm">
 
-          <div class="form-group">
-            <label for="deliveryType">Type</label>
-            <select class="form-control" id="deliveryType" name="type">
-              <option value="Delivery">Delivery</option>
-            </select>
-          </div>
+	<div class="form-group" style="display: none;">
+ 	 <label for="deliveryType">Type</label>
+ 	 <select class="form-control" id="deliveryType" name="type">
+ 	   <option value="Delivery" selected>Delivery</option>
+ 	 </select>
+	</div>
+
 
           <div class="form-group">
             <label for="deliveryDate">Select Date</label>
