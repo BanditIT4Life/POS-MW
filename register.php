@@ -19,6 +19,130 @@ if(isset($success))
 
 <div id="register_wrapper">
 
+
+
+
+
+
+
+
+
+
+
+
+<!-- ======================= Quick Add   Section 1 (Register header UI) ======================= -->
+<?php
+  $qa_can_manage = isset($can_manage) ? (bool)$can_manage : true;
+?>
+
+<style>
+  /* Toolbar shell: light grey like other boxes */
+  #qa_tabs_bar{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:10px 12px;margin:10px 0 14px;
+    background:#f5f5f5;                 /* grey background */
+    border:1px solid #e5e7eb;           /* subtle border */
+    border-radius:8px;
+  }
+
+  /* Tabs: boxed / pill look with bold black text */
+  #qa_tabs_ul{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0}
+  #qa_tabs_ul>li{list-style:none}
+  #qa_tabs_ul>li>a{
+    display:inline-block;
+    padding:6px 12px;
+    border:1px solid #d1d5db;
+    border-radius:10px;
+    background:#f1f5f9;                 /* light grey tab tile */
+    color:#111827;                       /* near-black text */
+    font-weight:700;                     /* bold */
+    text-decoration:none !important;
+    line-height:1.2;
+    transition:background .15s,border-color .15s,color .15s,box-shadow .15s;
+  }
+  #qa_tabs_ul>li>a:hover{
+    background:#e5e7eb;                 /* slightly darker on hover */
+    border-color:#cbd5e1;
+    color:#111827;
+  }
+  #qa_tabs_ul>li>a:focus{
+    outline:none;
+    box-shadow:0 0 0 3px rgba(17,24,39,.15); /* focus ring */
+  }
+
+  /* Active tab (Section 2 toggles .qa-active on <li>) */
+  #qa_tabs_ul>li.qa-active>a{
+    background:#e5e7eb;                 /* active = darker grey */
+    border-color:#94a3b8;
+    color:#111827 !important;           /* black, bold */
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.35);
+  }
+
+  /* Settings button: match grey + bold black text */
+  #qa_settings_btn.btn.btn-default.btn-sm{
+    border-radius:8px;
+    border-color:#d1d5db;
+    background:#f1f5f9;
+    color:#111827;
+    font-weight:700;
+  }
+  #qa_settings_btn.btn.btn-default.btn-sm:hover{
+    background:#e5e7eb;
+    border-color:#cbd5e1;
+    color:#111827;
+  }
+</style>
+
+<div id="qa_tabs_bar" data-can-manage="<?php echo $qa_can_manage ? '1':'0'; ?>">
+  <ul id="qa_tabs_ul" class="nav nav-pills"><!-- filled by Section 2 JS --></ul>
+
+  <?php if ($qa_can_manage): ?>
+    <button id="qa_settings_btn" type="button" class="btn btn-default btn-sm" aria-controls="qa_settings_modal">
+      <span class="glyphicon glyphicon-cog"></span> Settings
+    </button>
+  <?php endif; ?>
+</div>
+
+<!-- CSRF tokens consumed by Sections 2/3 -->
+<input type="hidden" id="qa_csrf_name" value="<?php echo $this->security->get_csrf_token_name(); ?>">
+<input type="hidden" id="qa_csrf_hash" value="<?php echo $this->security->get_csrf_hash(); ?>">
+
+<script>
+/* Fallback: ensure Settings opens the modal even if Section 2 binds late. */
+(function($){
+  if (!window.__qaSettingsBtnBound){
+    window.__qaSettingsBtnBound = true;
+    $(document).on('click', '#qa_settings_btn', function(e){
+      e.preventDefault();
+      var $m = $('#qa_settings_modal');
+      if ($m.length){
+        $m.modal('show');
+      } else if (typeof ensureSettingsModal === 'function'){
+        ensureSettingsModal();
+        $('#qa_settings_modal').modal('show');
+      }
+    });
+  }
+})(jQuery);
+</script>
+<!-- =================== /Quick Add   Section 1 =================== -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <!-- Top register controls -->
 
 	<?php echo form_open($controller_name."/change_mode", array('id'=>'mode_form', 'class'=>'form-horizontal panel panel-default')); ?>
@@ -87,9 +211,9 @@ if(isset($success))
 
 
 
-<!-- 📦 NEW Delivery Report Button -->
+<!-- ?? NEW Delivery Report Button -->
 <li class="pull-right">
-    <a href="<?php echo site_url('delivery_report'); ?>" class="btn btn-info btn-sm" id="delivery_report_button" title="View Delivery Report">
+    <a href="<?php echo site_url('sales/delivery_report'); ?>" class="btn btn-info btn-sm" id="delivery_report_button" title="View Delivery Report">
         <span class="glyphicon glyphicon-road">&nbsp;</span>Delivery Report
     </a>
 </li>
@@ -350,6 +474,9 @@ if(isset($success))
 	</table>
 </div>
 
+
+
+
 <!-- Overall Sale -->
 
 <div id="overall_sale" class="panel panel-default">
@@ -504,7 +631,7 @@ if(isset($success))
             <!-- Time Slot Dropdown -->
             <select class="form-control mb-2" id="timeSlotSelect">
               <option value="">-- Select a Time Slot (Optional) --</option>
-              <option value="‎ ">-- No Time Selected --</option>
+              <option value="? ">-- No Time Selected --</option>
               <option>10:00AM - 11:00AM</option>
               <option>10:00AM - 12:00PM</option>
               <option>10:00AM - 1:00PM</option>
@@ -637,7 +764,7 @@ if(isset($success))
             <!-- Time Slot Dropdown -->
             <select class="form-control mb-2" id="pickupOnlySlot">
 	      <option value="">-- Select a Time Slot (Optional) --</option>
-              <option value="‎ ">-- No Time Selected --</option>
+              <option value="? ">-- No Time Selected --</option>
               <option>10:00AM - 11:00AM</option>
               <option>10:00AM - 12:00PM</option>
               <option>10:00AM - 1:00PM</option>
@@ -798,7 +925,7 @@ if(isset($success))
             <!-- Time Slot Dropdown -->
             <select class="form-control mb-2" id="timeSlotSelect">
               <option value="">-- Select a Time Slot (Optional) --</option>
-              <option value="‎ ">-- No Time Selected --</option>
+              <option value="? ">-- No Time Selected --</option>
               <option>10:00AM - 11:00AM</option>
               <option>10:00AM - 12:00PM</option>
               <option>10:00AM - 1:00PM</option>
@@ -939,7 +1066,7 @@ if(isset($success))
             <!-- Time Slot Dropdown -->
             <select class="form-control mb-2" id="pickupOnlySlot">
               <option value="">-- Select a Time Slot (Optional) --</option>
-              <option value="‎ ">-- No Time Selected --</option>
+              <option value="? ">-- No Time Selected --</option>
               <option>10:00AM - 11:00AM</option>
               <option>10:00AM - 12:00PM</option>
               <option>10:00AM - 1:00PM</option>
@@ -1870,22 +1997,700 @@ document.getElementById('submitBlankPickupBtn').addEventListener('click', functi
 
 
 
+<!-- ======================= Quick Add   Section 2 (Runtime + Reliability) ======================= -->
+
+
+
+
+
+<script>
+(function($){
+  "use strict";
+
+  var QA = {
+    canManage: $('#qa_tabs_bar').data('can-manage') === 1 || $('#qa_tabs_bar').data('can-manage') === '1',
+    flows: [],
+    currentFlowId: null,
+    selections: {},
+    csrfName: $('#qa_csrf_name').val() || '<?php echo $this->security->get_csrf_token_name(); ?>',
+    csrfHash: $('#qa_csrf_hash').val() || '<?php echo $this->security->get_csrf_hash(); ?>'
+  };
+
+  function setCsrf(resp){
+    if (!resp) return;
+    var c = resp.csrf || (resp.data && resp.data.csrf) || null;
+    if (c && c.name && c.hash){
+      QA.csrfName = c.name; QA.csrfHash = c.hash;
+      $('#qa_csrf_name').val(c.name); $('#qa_csrf_hash').val(c.hash);
+    }
+  }
+
+  function apiGET(url, data, ok, err){
+    $.ajax({ url:url, method:'GET', data:data||{}, dataType:'json' })
+      .done(function(r){ setCsrf(r); if (r && r.ok){ ok && ok(r.data||{}, r); } else { (err||alert)((r && r.message)||'Request failed'); } })
+      .fail(function(x){ (err||alert)((x.responseJSON && x.responseJSON.message)||'Network error'); });
+  }
+  function apiPOST(url, data, ok, err){
+    var p = $.extend({}, data||{}); p[QA.csrfName] = QA.csrfHash;
+    $.ajax({ url:url, method:'POST', data:p, dataType:'json', traditional:true })
+      .done(function(r){ setCsrf(r); if (r && r.ok){ ok && ok(r.data||{}, r); } else { (err||alert)((r && r.message)||'Request failed'); } })
+      .fail(function(x){ (err||alert)((x.responseJSON && x.responseJSON.message)||'Network error'); });
+  }
+  window.apiGET = apiGET; window.apiPOST = apiPOST;
+
+  function ensureQuickModal(){
+    if ($('#qa_quick_modal').length) return;
+    var html = ''
+      + '<div class="modal fade" id="qa_quick_modal" tabindex="-1" role="dialog" aria-labelledby="qaQuickTitle">'
+      + '  <div class="modal-dialog" role="document">'
+      + '    <div class="modal-content">'
+      + '      <div class="modal-header">'
+      + '        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>'
+      + '        <h4 class="modal-title" id="qaQuickTitle">Quick Add</h4>'
+      + '      </div>'
+      + '      <div class="modal-body"><div id="qa_quick_steps"></div></div>'
+      + '      <div class="modal-footer">'
+      + '        <button type="button" id="qa_clear_btn" class="btn btn-default">Clear / Reset</button>'
+      + '        <button type="button" id="qa_add_to_cart_btn" class="btn btn-primary" disabled>Add to Cart</button>'
+      + '      </div>'
+      + '    </div>'
+      + '  </div>'
+      + '</div>';
+    $('body').append(html);
+  }
+  function ensureSettingsModal(){
+    if ($('#qa_settings_modal').length) return;
+    var html = ''
+      + '<div class="modal fade" id="qa_settings_modal" tabindex="-1" role="dialog" aria-labelledby="qaSettingsTitle">'
+      + '  <div class="modal-dialog modal-lg" role="document" style="width:100%;max-width:1100px;">'
+      + '    <div class="modal-content">'
+      + '      <div class="modal-header">'
+      + '        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>'
+      + '        <h4 class="modal-title" id="qaSettingsTitle">Universal Quick Add   Designer</h4>'
+      + '      </div>'
+      + '      <div class="modal-body"><div class="alert alert-info">Loading </div></div>'
+      + '      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div>'
+      + '    </div>'
+      + '  </div>'
+      + '</div>';
+    $('body').append(html);
+  }
+  window.ensureSettingsModal = ensureSettingsModal;
+
+  $(document).off('click.qaSettings').on('click.qaSettings', '#qa_settings_btn', function(e){
+    e.preventDefault(); ensureSettingsModal(); $('#qa_settings_modal').modal('show');
+  });
+
+  function loadFlows(){
+    apiGET('<?php echo site_url('quick_add/flows'); ?>', { enabled: QA.canManage ? 0 : 1 }, function(d){
+      QA.flows = d.flows || [];
+      renderTabs();
+    });
+  }
+  function renderTabs(){
+    var $ul = $('#qa_tabs_ul').empty();
+    if (!QA.flows.length){
+      $ul.append('<li class="disabled"><a href="javascript:void(0)">No tabs yet</a></li>');
+      return;
+    }
+    QA.flows.sort(function(a,b){ return (a.sort_order||0)-(b.sort_order||0) || (a.id-b.id); });
+    QA.flows.forEach(function(flow){
+      var $li = $('<li></li>').attr('data-flow-id', flow.id);
+      if (QA.currentFlowId === flow.id) $li.addClass('qa-active');
+      var $a = $('<a href="javascript:void(0)"></a>').text(flow.name);
+      $a.on('click', function(){ $('#qa_tabs_ul>li').removeClass('qa-active'); $li.addClass('qa-active'); openFlow(flow.id, flow.name); });
+      $li.append($a); $ul.append($li);
+    });
+  }
+
+  function openFlow(flowId, flowName){
+    ensureQuickModal();
+    QA.currentFlowId = flowId;
+    QA.selections = {};
+    $('#qaQuickTitle').text('Quick Add   ' + flowName);
+    $('#qa_quick_steps').html('<p>Loading </p>');
+    $('#qa_add_to_cart_btn').prop('disabled', true);
+    $('#qa_quick_modal').modal('show');
+    loadRuntimeOptions();
+  }
+  function loadRuntimeOptions(){
+    apiPOST('<?php echo site_url('quick_add/runtime_options'); ?>', {
+      flow_id: QA.currentFlowId,
+      selections: QA.selections,
+      selections_json: JSON.stringify(QA.selections||{})
+    }, function(d){
+      renderRuntime(d.steps || []);
+      updateAddEnabled();
+    });
+  }
+  function renderRuntime(steps){
+    var $w = $('#qa_quick_steps').empty();
+    steps.forEach(function(step){
+      var sid = step.id;
+      var $g = $('<div class="form-group" style="margin-bottom:10px;"></div>');
+      $g.append($('<label class="control-label"></label>').text(step.label));
+      var $sel = $('<select class="form-control input-sm"></select>').attr('data-step-id', sid);
+      $sel.append('<option value="">Select ' + step.label + '</option>');
+      (step.options||[]).forEach(function(o){
+        var $opt = $('<option></option>').val(o.id).text(o.label);
+        if (QA.selections[sid] === o.id) $opt.prop('selected', true);
+        $sel.append($opt);
+      });
+      if (!(step.options && step.options.length)) $sel.prop('disabled', true);
+      $sel.on('change', function(){
+        var v = $(this).val();
+        if (!v){ delete QA.selections[sid]; } else { QA.selections[sid] = parseInt(v,10); }
+        loadRuntimeOptions();
+      });
+      $g.append($sel); $w.append($g);
+    });
+    $('#qa_clear_btn').off('click').on('click', function(){ QA.selections = {}; loadRuntimeOptions(); $('#qa_add_to_cart_btn').prop('disabled', true); });
+    $('#qa_add_to_cart_btn').off('click').on('click', resolveAndAdd);
+  }
+  function updateAddEnabled(){
+    var ok = true;
+    $('#qa_quick_steps select').each(function(){
+      var hasOpts = $(this).find('option').length > 1;
+      if (hasOpts && !$(this).val()) ok = false;
+    });
+    $('#qa_add_to_cart_btn').prop('disabled', !ok);
+  }
+  function resolveAndAdd(){
+    var tuple = Object.keys(QA.selections).map(function(k){ return { step_id: parseInt(k,10), option_id: QA.selections[k] }; });
+    if (!tuple.length){ alert('Please complete your selections.'); return; }
+    var payload = { flow_id: QA.currentFlowId, selections_json: JSON.stringify(tuple) };
+    for (var i = 0; i < tuple.length; i++){
+      payload['selections['+i+'][step_id]'] = tuple[i].step_id;
+      payload['selections['+i+'][option_id]'] = tuple[i].option_id;
+    }
+    apiPOST('<?php echo site_url('quick_add/resolve'); ?>', payload, function(d){
+      var itemId = d.item_id || null;
+      var kitId  = d.item_kit_id || null;
+      if (!itemId && !kitId){ alert('No mapping found for that combination.'); return; }
+      var addPayload = {}; addPayload[QA.csrfName] = QA.csrfHash;
+      if (itemId){ addPayload.item = itemId; }
+      else { addPayload.item_kit = kitId; }  // if your build does not accept this, backend will ignore; items still work
+      $.post('<?php echo site_url('sales/add'); ?>', addPayload)
+        .done(function(){ window.location.href = '<?php echo site_url('sales'); ?>'; })
+        .fail(function(){ alert('Could not add to cart.'); });
+    }, function(msg){ alert(msg || 'Unable to resolve selection.'); });
+  }
+
+  window.addEventListener('qa:settings:changed', function(){ loadFlows(); });
+
+  $(function(){
+    ensureQuickModal();
+    ensureSettingsModal();
+    loadFlows();
+  });
+
+})(jQuery);
+</script>
 
 
 
 
 
 
+<!-- =================== /Quick Add   Section 2 =================== -->
 
 
+<!-- ======================= Quick Add   Section 3: Modals + Admin Designer (No Scopes/Deps) ======================= -->
 
 
+<style>
+  .qa-flex{display:flex;gap:10px;align-items:center}
+  .qa-grid{display:grid;gap:8px}
+  .qa-grid-2{grid-template-columns:1fr 1fr}
+  .qa-grid-3{grid-template-columns:1fr 1fr 1fr}
+  .qa-list{max-height:260px;overflow:auto;border:1px solid #eee;border-radius:4px;padding:6px}
+  .qa-muted{color:#777}
+  .qa-tight .form-group{margin-bottom:8px}
+  .qa-table th,.qa-table td{vertical-align:middle!important}
+  .qa-btn-xs{padding:2px 6px;line-height:1.2}
+</style>
 
+<div class="modal fade" id="qa_quick_modal" tabindex="-1" role="dialog" aria-labelledby="qaQuickTitle">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+        <h4 class="modal-title" id="qaQuickTitle">Quick Add</h4>
+      </div>
+      <div class="modal-body"><div id="qa_quick_steps"></div></div>
+      <div class="modal-footer">
+        <button type="button" id="qa_clear_btn" class="btn btn-default">Clear / Reset</button>
+        <button type="button" id="qa_add_to_cart_btn" class="btn btn-primary" disabled>Add to Cart</button>
+      </div>
+    </div>
+  </div>
+</div>
 
+<div class="modal fade" id="qa_settings_modal" tabindex="-1" role="dialog" aria-labelledby="qaSettingsTitle">
+  <div class="modal-dialog modal-lg" role="document" style="width:100%;max-width:1100px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+        <h4 class="modal-title" id="qaSettingsTitle">Universal Quick Add   Designer</h4>
+      </div>
 
+      <div class="modal-body qa-tight">
+        <div class="row">
+          <div class="col-sm-3">
+            <div class="panel panel-default">
+              <div class="panel-heading qa-flex" style="justify-content:space-between;">
+                <strong>Flows</strong>
+                <button id="qa_flow_add_btn" type="button" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-plus"></span></button>
+              </div>
+              <div class="panel-body"><div id="qa_flow_list" class="qa-list"></div></div>
+            </div>
 
+            <div class="panel panel-default">
+              <div class="panel-heading"><strong>Flow Properties</strong></div>
+              <div class="panel-body">
+                <div class="form-group"><label>Name</label><input type="text" id="qa_flow_name" class="form-control input-sm" placeholder="Flow name"></div>
+                <div class="qa-flex">
+                  <div class="checkbox" style="margin:0;"><label><input type="checkbox" id="qa_flow_enabled"> Enabled</label></div>
+                  <button id="qa_flow_save_btn" class="btn btn-success btn-sm">Save</button>
+                  <button id="qa_flow_delete_btn" class="btn btn-danger btn-sm pull-right">Delete</button>
+                </div>
+              </div>
+            </div>
+          </div>
 
+          <div class="col-sm-9">
+            <ul class="nav nav-tabs" role="tablist">
+              <li class="active"><a href="#qa_tab_steps" role="tab" data-toggle="tab">Steps</a></li>
+              <li><a href="#qa_tab_options" role="tab" data-toggle="tab">Options</a></li>
+              <li><a href="#qa_tab_mappings" role="tab" data-toggle="tab">Mappings</a></li>
+            </ul>
 
+            <div class="tab-content" style="margin-top:10px;">
+              <div role="tabpanel" class="tab-pane active" id="qa_tab_steps">
+                <div class="panel panel-default">
+                  <div class="panel-heading qa-flex" style="justify-content:space-between;">
+                    <strong>Steps in Flow</strong>
+                    <button id="qa_step_add_btn" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-plus"></span></button>
+                  </div>
+                  <div class="panel-body">
+                    <table class="table table-striped table-condensed qa-table" id="qa_steps_table">
+                      <thead><tr><th style="width:34px;">#</th><th>Label</th><th style="width:160px;">Actions</th></tr></thead>
+                      <tbody></tbody>
+                    </table>
+                    <p class="qa-muted">Order here is the dropdown order at the register.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div role="tabpanel" class="tab-pane" id="qa_tab_options">
+                <div class="qa-grid qa-grid-2">
+                  <div class="panel panel-default">
+                    <div class="panel-heading"><strong>Select Step</strong></div>
+                    <div class="panel-body">
+                      <select id="qa_opt_step_select" class="form-control input-sm"></select>
+                      <p class="qa-muted" style="margin-top:8px;">Add / rename / reorder options for the selected step.</p>
+                    </div>
+                  </div>
+                  <div class="panel panel-default">
+                    <div class="panel-heading"><strong>Add Option</strong></div>
+                    <div class="panel-body"><button id="qa_opt_add_btn" class="btn btn-success btn-sm">Add Option</button></div>
+                  </div>
+                </div>
+                <div class="panel panel-default" style="margin-top:10px;">
+                  <div class="panel-heading qa-flex" style="justify-content:space-between;">
+                    <strong>Options</strong><span class="qa-muted">Reorder / rename / delete</span>
+                  </div>
+                  <div class="panel-body">
+                    <table class="table table-striped table-condensed qa-table" id="qa_options_table">
+                      <thead><tr><th style="width:34px;">#</th><th>Label</th><th style="width:120px;">Actions</th></tr></thead>
+                      <tbody></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <div role="tabpanel" class="tab-pane" id="qa_tab_mappings">
+                <div class="panel panel-default">
+                  <div class="panel-heading"><strong>Create Mapping</strong></div>
+                  <div class="panel-body">
+                    <div id="qa_map_step_pickers" class="qa-grid qa-grid-3"></div>
+                    <div class="qa-grid qa-grid-3" style="margin-top:10px;">
+                      <div class="form-group">
+                        <label>Find Item / Kit</label>
+                        <div class="input-group">
+                          <input type="text" id="qa_item_search" class="form-control input-sm" placeholder="Search by name or number">
+                          <span class="input-group-btn"><button id="qa_item_search_btn" class="btn btn-default btn-sm" type="button">Search</button></span>
+                        </div>
+                        <select id="qa_item_results" class="form-control input-sm" style="margin-top:6px;"></select>
+                        <div class="help-block">Item kits are prefixed with  (Kit) .</div>
+                      </div>
+                      <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button id="qa_map_create_btn" class="btn btn-success btn-sm" style="display:block;">Create Mapping</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="panel panel-default">
+                  <div class="panel-heading"><strong>Existing Mappings</strong></div>
+                  <div class="panel-body">
+                    <table class="table table-striped table-condensed qa-table" id="qa_mappings_table">
+                      <thead><tr><th>Tuple</th><th style="width:160px;">Target</th><th style="width:80px;">Actions</th></tr></thead>
+                      <tbody></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+            </div> <!-- /tab-content -->
+          </div> <!-- /col-sm-9 -->
+        </div> <!-- /row -->
+      </div>
+
+      <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="qa_step_editor_modal" tabindex="-1" role="dialog" aria-labelledby="qaStepEditorTitle">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+        <h4 class="modal-title" id="qaStepEditorTitle">Add Step</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group"><label>Label</label><input type="text" id="qa_step_label" class="form-control input-sm" placeholder="Step label"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" id="qa_step_save_btn" class="btn btn-primary">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="qa_option_editor_modal" tabindex="-1" role="dialog" aria-labelledby="qaOptionEditorTitle">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+        <h4 class="modal-title" id="qaOptionEditorTitle">Add Option</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group"><label>Option label</label><input type="text" id="qa_opt_label_input" class="form-control input-sm" placeholder="e.g., Pine / Queen"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" id="qa_option_save_btn" class="btn btn-primary">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function($){
+  "use strict";
+
+  function csrf(){ return { name: $('#qa_csrf_name').val() || '<?php echo $this->security->get_csrf_token_name(); ?>', hash: $('#qa_csrf_hash').val() || '<?php echo $this->security->get_csrf_hash(); ?>' }; }
+  function setCsrf(r){ var c=(r&&r.csrf)||(r&&r.data&&r.data.csrf); if(c&&c.name&&c.hash){ $('#qa_csrf_name').val(c.name); $('#qa_csrf_hash').val(c.hash);} }
+  function okWrap(r){ if(r && typeof r==='object' && 'ok' in r){ return {ok:!!r.ok, data:r.data||{}, message:r.message||''}; } return {ok:true, data:r||{}, message:''}; }
+  function getJSON(u,d,ok,err){ $.ajax({url:u,method:'GET',data:d||{},dataType:'json'}).done(function(r){setCsrf(r);var n=okWrap(r);if(n.ok){ok&&ok(n.data);}else{(err||alert)(n.message||'Request failed');}}).fail(function(x){(err||alert)((x.responseJSON&&x.responseJSON.message)||'Network error');}); }
+  function postJSON(u,d,ok,err){ var c=csrf(); var p=$.extend({},d||{}); p[c.name]=c.hash; $.ajax({url:u,method:'POST',data:p,dataType:'json',traditional:true}).done(function(r){setCsrf(r);var n=okWrap(r);if(n.ok){ok&&ok(n.data);}else{(err||alert)(n.message||'Request failed');}}).fail(function(x){(err||alert)((x.responseJSON&&x.responseJSON.message)||'Network error');}); }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(m){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]);}); }
+
+  var ST = { flows:[], currentFlowId:null, steps:[], optionsByStep:{}, runtimeSteps:[], mapSelections:{} };
+
+  $('#qa_settings_modal').on('shown.bs.modal', function(){ loadFlows(); }).on('hidden.bs.modal', function(){
+    ST.flows=[]; ST.currentFlowId=null; ST.steps=[]; ST.optionsByStep={}; ST.runtimeSteps=[]; ST.mapSelections={};
+    $('#qa_flow_list').empty(); $('#qa_flow_name').val(''); $('#qa_flow_enabled').prop('checked',false);
+    $('#qa_steps_table tbody').empty(); $('#qa_opt_step_select').empty(); $('#qa_options_table tbody').empty();
+    $('#qa_map_step_pickers').empty(); $('#qa_mappings_table tbody').empty();
+    $('#qa_item_search').val(''); $('#qa_item_results').empty();
+  });
+
+  function loadFlows(){ getJSON('<?php echo site_url('quick_add/flows'); ?>', {}, function(d){
+    ST.flows = d.flows || [];
+    renderFlowList();
+    if (!ST.currentFlowId && ST.flows.length) selectFlow(ST.flows[0].id);
+  }); }
+  function renderFlowList(){
+    var $w=$('#qa_flow_list').empty();
+    if (!ST.flows.length){ $w.append('<div class="qa-muted">No flows yet. Use the + button to create one.</div>'); return; }
+    ST.flows.forEach(function(f){
+      var row=$('<div class="qa-flex"></div>').css({justifyContent:'space-between',padding:'4px 2px',borderBottom:'1px solid #f3f3f3'});
+      var a=$('<a href="javascript:void(0)"></a>').text(f.name+(f.is_enabled?'':' (disabled)')).on('click',function(){selectFlow(f.id);});
+      var btns=$('<span></span>');
+      btns.append($('<button class="btn btn-default btn-xs qa-btn-xs" title="Up"><span class="glyphicon glyphicon-chevron-up"></span></button>').on('click',function(){flowNudge(f.id,-1);})); btns.append(' ');
+      btns.append($('<button class="btn btn-default btn-xs qa-btn-xs" title="Down"><span class="glyphicon glyphicon-chevron-down"></span></button>').on('click',function(){flowNudge(f.id,1);})); 
+      row.append(a).append(btns); $w.append(row);
+    });
+  }
+  function selectFlow(id){
+    ST.currentFlowId=parseInt(id,10);
+    var f=ST.flows.find(function(x){return x.id===ST.currentFlowId;});
+    $('#qa_flow_name').val(f?f.name:''); $('#qa_flow_enabled').prop('checked',!!(f&&f.is_enabled));
+    loadSteps(); loadMappings();
+  }
+  $(document).off('click.qaFlowAdd').on('click.qaFlowAdd','#qa_flow_add_btn',function(){
+    var name=prompt('New flow name:'); if(!name) return;
+    postJSON('<?php echo site_url('quick_add/flows_create'); ?>',{name:name,is_enabled:true},function(){loadFlows(); window.dispatchEvent(new CustomEvent('qa:settings:changed'));});
+  });
+  $('#qa_flow_save_btn').on('click',function(){
+    if(!ST.currentFlowId) return;
+    postJSON('<?php echo site_url('quick_add/flows_update'); ?>',{id:ST.currentFlowId,name:$('#qa_flow_name').val(),is_enabled:$('#qa_flow_enabled').is(':checked')},function(){
+      loadFlows(); window.dispatchEvent(new CustomEvent('qa:settings:changed'));
+    });
+  });
+  $('#qa_flow_delete_btn').on('click',function(){
+    if(!ST.currentFlowId) return;
+    if(!confirm('Delete this flow and all of its steps/options/mappings?')) return;
+    postJSON('<?php echo site_url('quick_add/flows_delete'); ?>',{id:ST.currentFlowId},function(){
+      ST.currentFlowId=null; loadFlows();
+      $('#qa_steps_table tbody').empty(); $('#qa_opt_step_select').empty(); $('#qa_options_table tbody').empty();
+      $('#qa_map_step_pickers').empty(); $('#qa_mappings_table tbody').empty();
+      window.dispatchEvent(new CustomEvent('qa:settings:changed'));
+    });
+  });
+  function flowNudge(flowId,dir){
+    var arr=ST.flows.slice().sort(function(a,b){return(a.sort_order||0)-(b.sort_order||0)||a.id-b.id;});
+    var idx=arr.findIndex(function(x){return x.id===flowId;}); var tgt=idx+dir; if(tgt<0||tgt>=arr.length) return;
+    var tmp=arr[idx]; arr[idx]=arr[tgt]; arr[tgt]=tmp;
+    var ops=[]; arr.forEach(function(f,i){ ops.push(new Promise(function(res){ postJSON('<?php echo site_url('quick_add/flows_update'); ?>',{id:f.id,sort_order:(i+1)},function(){res();}); })); });
+    Promise.all(ops).then(function(){ loadFlows(); window.dispatchEvent(new CustomEvent('qa:settings:changed')); });
+  }
+
+  function loadSteps(){ if(!ST.currentFlowId) return;
+    getJSON('<?php echo site_url('quick_add/steps'); ?>',{flow_id:ST.currentFlowId},function(d){
+      ST.steps=(d.steps||[]).map(function(s){s.id=parseInt(s.id,10);return s;});
+      renderSteps(); renderOptStepSelect(); ST.mapSelections={}; buildMapPickers();
+    });
+  }
+  function renderSteps(){
+    var $tb=$('#qa_steps_table tbody').empty();
+    if(!ST.steps.length){$tb.append('<tr><td colspan="3" class="qa-muted">No steps yet.</td></tr>');return;}
+    ST.steps.forEach(function(s,i){
+      var tr=$('<tr></tr>');
+      tr.append('<td class="qa-muted">'+(i+1)+'</td>');
+      tr.append('<td>'+esc(s.label)+'</td>');
+      var a=$('<td></td>');
+      a.append(stepBtnNudge(s.id,-1)).append(' ');
+      a.append(stepBtnNudge(s.id, 1)).append(' ');
+      a.append(stepBtnEdit(s)).append(' ');
+      a.append(stepBtnDel(s.id));
+      tr.append(a); $tb.append(tr);
+    });
+  }
+  function stepBtnNudge(id,dir){
+    return $('<button class="btn btn-default btn-xs qa-btn-xs"><span class="glyphicon glyphicon-chevron-'+(dir<0?'up':'down')+'"></span></button>').on('click',function(){
+      var ids=ST.steps.map(function(s){return s.id;}); var idx=ids.indexOf(id),t=idx+dir; if(t<0||t>=ids.length) return;
+      var tmp=ids[idx]; ids[idx]=ids[t]; ids[t]=tmp;
+      var p={flow_id:ST.currentFlowId,ordered_ids_json:JSON.stringify(ids)}; for(var i=0;i<ids.length;i++){p['ordered_ids['+i+']']=ids[i];}
+      postJSON('<?php echo site_url('quick_add/steps_reorder'); ?>',p,function(){loadSteps(); window.dispatchEvent(new CustomEvent('qa:settings:changed'));});
+    });
+  }
+  function stepBtnDel(id){
+    return $('<button class="btn btn-danger btn-xs qa-btn-xs"><span class="glyphicon glyphicon-trash"></span></button>').on('click',function(){
+      if(!confirm('Delete this step and its options/mappings?')) return;
+      postJSON('<?php echo site_url('quick_add/steps_delete'); ?>',{id:id},function(){loadSteps(); window.dispatchEvent(new CustomEvent('qa:settings:changed'));});
+    });
+  }
+  function stepBtnEdit(step){
+    return $('<button class="btn btn-default btn-xs qa-btn-xs"><span class="glyphicon glyphicon-pencil"></span></button>').on('click',function(){ openStepEditor(step); });
+  }
+  $('#qa_step_add_btn').on('click',function(){ openStepEditor(null); });
+  function openStepEditor(step){
+    var edit=!!step; $('#qaStepEditorTitle').text(edit?'Edit Step':'Add Step'); $('#qa_step_label').val(edit?step.label:'');
+    $('#qa_step_save_btn').off('click').on('click',function(){
+      var label=$.trim($('#qa_step_label').val()); if(!label){alert('Label is required.');return;}
+      if(edit){ postJSON('<?php echo site_url('quick_add/steps_update'); ?>',{id:step.id,label:label},function(){ $('#qa_step_editor_modal').modal('hide'); loadSteps(); window.dispatchEvent(new CustomEvent('qa:settings:changed'));}); }
+      else{ postJSON('<?php echo site_url('quick_add/steps_create'); ?>',{flow_id:ST.currentFlowId,label:label},function(){ $('#qa_step_editor_modal').modal('hide'); loadSteps(); window.dispatchEvent(new CustomEvent('qa:settings:changed'));}); }
+    });
+    $('#qa_step_editor_modal').modal('show');
+  }
+
+  function renderOptStepSelect(){
+    var $s=$('#qa_opt_step_select').empty();
+    if(!ST.steps.length){ $s.append('<option value="">No steps yet</option>'); return; }
+    ST.steps.forEach(function(s){ $s.append($('<option></option>').val(s.id).text(s.label)); });
+    $s.off('change').on('change',function(){ var sid=parseInt($(this).val(),10); if(!sid){$('#qa_options_table tbody').empty();return;} loadOptions(sid); });
+    $s.trigger('change');
+  }
+  function loadOptions(stepId,cb){
+    getJSON('<?php echo site_url('quick_add/options'); ?>',{step_id:stepId,raw:1},function(d){
+      ST.optionsByStep[stepId]=(d.options||[]).map(function(o){o.id=parseInt(o.id,10);return o;});
+      renderOptions(stepId); if(cb) cb();
+    });
+  }
+  function renderOptions(stepId){
+    var $tb=$('#qa_options_table tbody').empty(); var rows=ST.optionsByStep[stepId]||[];
+    if(!rows.length){$tb.append('<tr><td colspan="3" class="qa-muted">No options yet.</td></tr>');return;}
+    rows.forEach(function(o,i){
+      var tr=$('<tr></tr>');
+      tr.append('<td class="qa-muted">'+(i+1)+'</td>');
+      tr.append('<td>'+esc(o.label)+'</td>');
+      var a=$('<td></td>');
+      a.append(optBtnNudge(stepId,o.id,-1)).append(' ');
+      a.append(optBtnNudge(stepId,o.id, 1)).append(' ');
+      a.append(optBtnRename(stepId,o)).append(' ');
+      a.append(optBtnDel(stepId,o.id));
+      tr.append(a); $tb.append(tr);
+    });
+  }
+  function optBtnNudge(stepId,optId,dir){
+    return $('<button class="btn btn-default btn-xs qa-btn-xs"><span class="glyphicon glyphicon-chevron-'+(dir<0?'up':'down')+'"></span></button>').on('click',function(){
+      var rows=(ST.optionsByStep[stepId]||[]).slice(); var ids=rows.map(function(r){return r.id;});
+      var idx=ids.indexOf(optId),t=idx+dir; if(t<0||t>=ids.length) return;
+      var tmp=ids[idx]; ids[idx]=ids[t]; ids[t]=tmp;
+      var p={step_id:stepId,ordered_ids_json:JSON.stringify(ids)}; for(var i=0;i<ids.length;i++){p['ordered_ids['+i+']']=ids[i];}
+      postJSON('<?php echo site_url('quick_add/options_reorder'); ?>',p,function(){loadOptions(stepId); window.dispatchEvent(new CustomEvent('qa:settings:changed'));});
+    });
+  }
+  function optBtnRename(stepId,opt){
+    return $('<button class="btn btn-default btn-xs qa-btn-xs"><span class="glyphicon glyphicon-pencil"></span></button>').on('click',function(){
+      var v=prompt('New label:',opt.label); if(!v) return;
+      postJSON('<?php echo site_url('quick_add/options_update'); ?>',{id:opt.id,label:v},function(){loadOptions(stepId); window.dispatchEvent(new CustomEvent('qa:settings:changed'));});
+    });
+  }
+  function optBtnDel(stepId,optId){
+    return $('<button class="btn btn-danger btn-xs qa-btn-xs"><span class="glyphicon glyphicon-trash"></span></button>').on('click',function(){
+      if(!confirm('Delete this option? It will be removed from mappings.')) return;
+      postJSON('<?php echo site_url('quick_add/options_delete'); ?>',{id:optId},function(){loadOptions(stepId); window.dispatchEvent(new CustomEvent('qa:settings:changed'));});
+    });
+  }
+  $('#qa_opt_add_btn').off('click').on('click',function(){
+    var sid=parseInt($('#qa_opt_step_select').val(),10); if(!sid){alert('Select a step first.');return;} openOptionEditor(sid);
+  });
+  function openOptionEditor(stepId){
+    var step=ST.steps.find(function(s){return s.id===stepId;}); if(!step){alert('Step not found.');return;}
+    $('#qaOptionEditorTitle').text('Add Option to "'+step.label+'"'); $('#qa_opt_label_input').val('');
+    $('#qa_option_save_btn').off('click').on('click',function(){
+      var label=$.trim($('#qa_opt_label_input').val()); if(!label){alert('Label is required.');return;}
+      postJSON('<?php echo site_url('quick_add/options_create'); ?>',{step_id:stepId,label:label},function(){
+        $('#qa_option_editor_modal').modal('hide'); loadOptions(stepId); window.dispatchEvent(new CustomEvent('qa:settings:changed'));
+      });
+    });
+    $('#qa_option_editor_modal').modal('show');
+  }
+
+  function buildMapPickers(){
+    if(!ST.currentFlowId) return;
+    var partial={}; Object.keys(ST.mapSelections).forEach(function(k){ if(ST.mapSelections[k]!=='*'){ partial[k]=ST.mapSelections[k]; } });
+    postJSON('<?php echo site_url('quick_add/runtime_options'); ?>',{flow_id:ST.currentFlowId,selections:partial,selections_json:JSON.stringify(partial)},function(d){
+      ST.runtimeSteps=d.steps||[];
+      var $w=$('#qa_map_step_pickers').empty();
+      ST.runtimeSteps.forEach(function(s){
+        var sel=$('<select class="form-control input-sm qa-map-sel"></select>').attr('data-step-id',s.id);
+        sel.append('<option value="">* (Any)</option>');
+        (s.options||[]).forEach(function(o){
+          var op=$('<option></option>').val(o.id).text(o.label);
+          if(String(ST.mapSelections[s.id]||'')===String(o.id)) op.prop('selected',true);
+          sel.append(op);
+        });
+        var grp=$('<div class="form-group"></div>'); grp.append('<label>'+esc(s.label)+'</label>').append(sel); $w.append(grp);
+      });
+      $(document).off('change.qaMapSel').on('change.qaMapSel','.qa-map-sel',function(){
+        var sid=parseInt($(this).attr('data-step-id'),10); var v=$(this).val(); ST.mapSelections[sid]=v?parseInt(v,10):'*'; buildMapPickers();
+      });
+      loadMappings();
+    });
+  }
+  function loadMappings(){ if(!ST.currentFlowId) return;
+    getJSON('<?php echo site_url('quick_add/mappings'); ?>',{flow_id:ST.currentFlowId},function(d){ renderMappings(d.mappings||[]); });
+  }
+  function renderMappings(rows){
+    var $tb=$('#qa_mappings_table tbody').empty();
+    if(!rows.length){ $tb.append('<tr><td colspan="3" class="qa-muted">No mappings yet.</td></tr>'); return; }
+    rows.forEach(function(m){
+      var tupleArr=[]; try{ tupleArr=Array.isArray(m.key)?m.key:JSON.parse(m.key_json||'[]'); }catch(e){ tupleArr=[]; }
+      var tuple=(tupleArr||[]).map(function(k){ return stepLabel(k.step_id)+': '+(k.option_id==='*'?'*':optLabel(k.step_id,k.option_id)); }).join(' | ');
+      var target = m.item_kit_id ? ('Kit #'+m.item_kit_id) : ('Item #'+m.item_id);
+      var tr=$('<tr></tr>');
+      tr.append('<td>'+esc(tuple)+'</td>');
+      tr.append('<td>'+esc(target)+'</td>');
+      var td=$('<td></td>');
+      td.append($('<button class="btn btn-danger btn-xs qa-btn-xs"><span class="glyphicon glyphicon-trash"></span></button>').on('click',function(){
+        if(!confirm('Delete this mapping?')) return;
+        postJSON('<?php echo site_url('quick_add/mappings_delete'); ?>',{id:m.id},function(){ loadMappings(); window.dispatchEvent(new CustomEvent('qa:settings:changed')); });
+      }));
+      tr.append(td); $tb.append(tr);
+    });
+  }
+
+  function parseIntLoose(v){ var n=parseInt(v,10); return isNaN(n)?null:n; }
+  function extractIdFromLabel(label){
+    var m = String(label||'').match(/(^|\D)(\d{1,9})(\D|$)/); return m ? parseInt(m[2],10) : null;
+  }
+  function doSearch(){
+    var q=$.trim($('#qa_item_search').val());
+    var itemsReq = $.ajax({ url:'<?php echo site_url('quick_add/items_search'); ?>', data:{ q:q, limit:20 }, dataType:'json' });
+    var kitsReq  = $.ajax({ url:'<?php echo site_url('item_kits/suggest'); ?>',      data:{ term:q },          dataType:'json' });
+    $.when(itemsReq, kitsReq).done(function(itemsRes, kitsRes){
+      var items = (itemsRes[0] && itemsRes[0].data && itemsRes[0].data.results) || itemsRes[0] || [];
+      var kits  = kitsRes[0] || [];
+
+      var options=[];
+      $.each(items, function(_,r){
+        if (r && (r.id||r.item_id)){
+          var id = r.id || r.item_id;
+          var text = r.text || r.label || ('Item #'+id);
+          options.push({ value:'item:'+id, text:text });
+        }
+      });
+
+      $.each(kits, function(_,k){
+        var id = k.id || parseIntLoose(k.value) || extractIdFromLabel(k.label);
+        if (!id) return;
+        var text = k.text || k.label || ('Kit #'+id);
+        if (text.indexOf('(Kit)') !== 0) text = '(Kit) ' + text;
+        options.push({ value:'kit:'+id, text:text });
+      });
+
+      var $sel=$('#qa_item_results').empty();
+      if (!options.length){ $sel.append('<option value="">No results</option>'); return; }
+      $.each(options, function(_,o){ $sel.append($('<option></option>').val(o.value).text(o.text)); });
+    }).fail(function(){
+      // Fallback: items only
+      $.getJSON('<?php echo site_url('quick_add/items_search'); ?>',{ q:q, limit:20 }).done(function(r){
+        var items=(r&&r.data&&r.data.results)||r||[];
+        var $sel=$('#qa_item_results').empty();
+        $.each(items,function(_,it){ if(it&&it.id){ $sel.append($('<option></option>').val('item:'+it.id).text(it.text||('Item #'+it.id))); }});
+      });
+    });
+  }
+  $(document).off('click.qaSearch').on('click.qaSearch','#qa_item_search_btn',function(e){ e.preventDefault(); doSearch(); });
+  $(document).off('keydown.qaSearch').on('keydown.qaSearch','#qa_item_search',function(e){ if(e.which===13){ e.preventDefault(); doSearch(); } });
+
+  $('#qa_map_create_btn').on('click',function(){
+    if(!ST.currentFlowId) return;
+    var sel=$('#qa_item_results').val(); if(!sel){ alert('Choose an Item or Item Kit.'); return; }
+    var parts=String(sel).split(':'); var typ=(parts[0]||'item').toLowerCase(); var id=parseInt(parts[1]||'0',10); if(!id){ alert('Invalid selection.'); return; }
+
+    var tuple=[]; ST.steps.forEach(function(s){ var v=ST.mapSelections[s.id]; if(v==='*'){ tuple.push({step_id:s.id,option_id:'*'}); } else if(typeof v==='number'&&v>0){ tuple.push({step_id:s.id,option_id:v}); }});
+    if(!tuple.length){ alert('Pick tuple values first.'); return; }
+
+    var p={ flow_id:ST.currentFlowId, key_json:JSON.stringify(tuple) };
+    for(var i=0;i<tuple.length;i++){ p['key['+i+'][step_id]']=tuple[i].step_id; p['key['+i+'][option_id]']=tuple[i].option_id; }
+    if(typ==='item'){ p.item_id=id; } else { p.target_type='kit'; p.item_kit_id=id; }
+
+    postJSON('<?php echo site_url('quick_add/mappings_create'); ?>', p, function(){
+      alert('Mapping created.'); loadMappings(); window.dispatchEvent(new CustomEvent('qa:settings:changed'));
+    }, function(msg){
+      if(typ==='kit'){ alert((msg||'This server build may not support mapping kits yet. Items will still work.')); }
+      else { alert(msg||'Create mapping failed.'); }
+    });
+  });
+
+  function stepLabel(step_id){ var s=ST.steps.find(function(x){return x.id===step_id;}); return s?s.label:('#'+step_id); }
+  function optLabel(step_id, option_id){
+    var arr=ST.optionsByStep[step_id]||[]; var o=arr.find(function(x){return x.id===option_id;}); if(o) return o.label;
+    var rs=ST.runtimeSteps.find(function(x){return x.id===step_id;}); if(rs){ var ro=(rs.options||[]).find(function(x){return x.id===option_id;}); if(ro) return ro.label; }
+    return '#'+option_id;
+  }
+
+})(jQuery);
+</script>
 
 
 
