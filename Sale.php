@@ -1412,7 +1412,7 @@ class Sale extends CI_Model
 		$this->db->from('sales');
 		$this->db->where('sale_id', $sale_id);
 		$this->db->join('people', 'people.person_id = sales.customer_id', 'LEFT');
-		$this->db-where('sale_status', SUSPENDED);
+		$this->db->where('sale_status', SUSPENDED);
 
 		return $this->db->get();
 	}
@@ -1444,106 +1444,413 @@ class Sale extends CI_Model
 		}
 	}
 
-//---------Delivery Report Page---------//
-public function get_delivery_sales($from_date = '', $to_date = '', $delivery_from_date = '', $delivery_to_date = '', $local_delivery_from_date = '', $local_delivery_to_date = '')
+
+public function get_total_sales_today()
 {
-    $this->db->select('
-        ospos_sales.sale_id,
-        ospos_items.name AS item_name,
-        CONCAT(ospos_people.first_name, " ", ospos_people.last_name) AS customer_name,
-        ospos_people.phone_number,
-        ospos_people.address_1,
-        ospos_people.city,
-        ospos_people.state,
-        ospos_people.zip AS postal_code,
-        ospos_sales.sale_time
-    ');
-    $this->db->from('ospos_sales');
-    $this->db->join('ospos_sales_items', 'ospos_sales.sale_id = ospos_sales_items.sale_id');
-    $this->db->join('ospos_items', 'ospos_sales_items.item_id = ospos_items.item_id');
-    $this->db->join('ospos_customers', 'ospos_sales.customer_id = ospos_customers.person_id', 'left');
-    $this->db->join('ospos_people', 'ospos_customers.person_id = ospos_people.person_id', 'left');
-    $this->db->where('ospos_sales.sale_status', 0);
-    $this->db->order_by('ospos_sales.sale_time', 'DESC');
+    $today = date('Y-m-d');
+    $this->db->select('SUM(total) as total_sales');
+    $this->db->from('sales');
+    $this->db->where('DATE(sale_time)', $today);
+    $result = $this->db->get()->row();
 
-    $query = $this->db->get();
-    $sales = $query->result_array();
+    return $result->total_sales ? $result->total_sales : 0;
+}
 
-    $final_results = [];
-
-    foreach ($sales as $sale)
-    {
-        $item_name = $sale['item_name'];
-        $sale_time = $sale['sale_time'];
-
-        $add_to_results = false;
-
-        if (!empty($local_delivery_from_date) && !empty($local_delivery_to_date))
-        {
-            // 📦 Local Delivery Only logic: exact match
-            if (trim($item_name) === "Local Delivery")
-            {
-                $sale_date_only = date('Y-m-d', strtotime($sale_time));
-                if ($sale_date_only >= $local_delivery_from_date && $sale_date_only <= $local_delivery_to_date)
-                {
-                    $add_to_results = true;
-                }
-            }
-        }
-        else
-        {
-            // 🛻 Sale Date Range and Delivery Date Range logic: must contain "Local Delivery" somewhere
-            if (stripos($item_name, 'Local Delivery') === false)
-            {
-                continue; // Skip if not related to Local Delivery
-            }
-
-            if (!empty($from_date) && !empty($to_date))
-            {
-                // 🗓️ Sale Date Range
-                $sale_date_only = date('Y-m-d', strtotime($sale_time));
-                if ($sale_date_only >= $from_date && $sale_date_only <= $to_date)
-                {
-                    $add_to_results = true;
-                }
-            }
-            else if (!empty($delivery_from_date) && !empty($delivery_to_date))
-            {
-                // 🗓️ Delivery Date Range based on date in item name
-                if (preg_match('/\d{2}\/\d{2}\/\d{4}/', $item_name, $matches))
-                {
-                    $delivery_date_raw = $matches[0]; // first MM/DD/YYYY found
-                    $delivery_date_obj = DateTime::createFromFormat('m/d/Y', $delivery_date_raw);
-
-                    if ($delivery_date_obj)
-                    {
-                        $delivery_date_formatted = $delivery_date_obj->format('Y-m-d');
-
-                        if ($delivery_date_formatted >= $delivery_from_date && $delivery_date_formatted <= $delivery_to_date)
-                        {
-                            $add_to_results = true;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                // 🛑 No filters at all (unlikely, but safe fallback)
-                $add_to_results = true;
-            }
-        }
-
-        if ($add_to_results)
-        {
-            $final_results[] = $sale;
-        }
-    }
-
-    return $final_results;
+public function get_transaction_count_today()
+{
+	$today = date('Y-m-d');
+	$this->db->from('sales');
+	$this->db->where('DATE(sale_time)', $today);
+	return $this->db->count_all_results();
 }
 
 
+/* ===========================
+ * Delivery Report — Helpers & Query (REWRITE)
+ * =========================== */
 
-  
+/**
+ * Public entrypoint for Delivery Report.
+ *
+ * $filters:
+ * - filter_type: 'delivery_date' | 'sale_date' | 'local_delivery_only'
+ * - sale_date_from, sale_date_to: 'YYYY-MM-DD'
+ * - delivery_date_from, delivery_date_to: 'YYYY-MM-DD'
+ * Optional:
+ * - single_sale_id: int (fetch only that sale)
+ */
+public function get_deliveries(array $filters)
+{
+	$filter_type = isset($filters['filter_type']) ? $filters['filter_type'] : 'delivery_date';
+	$sale_from   = isset($filters['sale_date_from']) ? $filters['sale_date_from'] : date('Y-m-d');
+	$sale_to     = isset($filters['sale_date_to']) ? $filters['sale_date_to'] : date('Y-m-d');
+	$deliv_from  = isset($filters['delivery_date_from']) ? $filters['delivery_date_from'] : date('Y-m-d');
+	$deliv_to    = isset($filters['delivery_date_to']) ? $filters['delivery_date_to'] : date('Y-m-d');
+	$single_id   = isset($filters['single_sale_id']) ? (int)$filters['single_sale_id'] : null;
+
+	$limit  = isset($filters['limit'])  ? (int)$filters['limit']  : 25;  // pagination
+	$offset = isset($filters['offset']) ? (int)$filters['offset'] : 0;
+
+	// 1) Get candidate sales: any sale with at least one item named like "Local Delivery%"
+	$this->db->select("
+		s.sale_id,
+		s.sale_time,
+		s.comment,
+		s.customer_id,
+		COALESCE(p.first_name,'')   AS first_name,
+		COALESCE(p.last_name,'')    AS last_name,
+		COALESCE(p.phone_number,'') AS phone_number,
+		COALESCE(p.address_1,'')    AS address_1,
+		COALESCE(p.address_2,'')    AS address_2,
+		COALESCE(p.city,'')         AS city,
+		COALESCE(p.state,'')        AS state,
+		COALESCE(p.zip,'')          AS postal_code
+	", FALSE);
+ 
+	$this->db->from('sales AS s');
+$this->db->join('sales_items AS si', 'si.sale_id = s.sale_id', 'inner');
+$this->db->join('items AS i', 'i.item_id = si.item_id', 'inner');
+$this->db->join('customers AS c', 'c.person_id = s.customer_id', 'left');
+$this->db->join('people AS p', 'p.person_id = s.customer_id', 'left');
+
+// Exclude canceled (“deleted”) sales
+$this->db->where('s.sale_status !=', CANCELED);
+
+// If you prefer to show ONLY completed deliveries, use this instead:
+// $this->db->where('s.sale_status', COMPLETED);
+
+$this->db->like('i.name', 'Local Delivery', 'after');
+
+
+	if ($single_id) {
+		$this->db->where('s.sale_id', $single_id);
+	}
+
+	// For these two modes we can safely narrow by SALE DATE at SQL level
+	if (!$single_id && ($filter_type === 'sale_date' || $filter_type === 'local_delivery_only')) {
+		$this->db->where('DATE(s.sale_time) BETWEEN ' . $this->db->escape($sale_from) . ' AND ' . $this->db->escape($sale_to));
+	}
+
+	$this->db->group_by('s.sale_id');
+	$this->db->order_by('s.sale_time', 'desc');
+	$candidates = $this->db->get()->result_array();
+
+	// 2) Filter in PHP (we must parse the "Local Delivery ..." text)
+	$filtered = array();
+
+	foreach ($candidates as $b) {
+		$sale_id = (int)$b['sale_id'];
+
+		// First "Local Delivery..." line for this sale
+		$ld = $this->db->select('i.name')
+			->from('sales_items AS si')
+			->join('items AS i', 'i.item_id = si.item_id', 'inner')
+			->where('si.sale_id', $sale_id)
+			->like('i.name', 'Local Delivery', 'after')
+			->order_by('si.line', 'asc')
+			->limit(1)
+			->get()->row_array();
+
+		$parsed = array('date'=>null, 'time_start'=>null, 'time_end'=>null);
+		if ($ld && isset($ld['name'])) {
+			$parsed = $this->parse_local_delivery($ld['name']);
+		}
+
+		$delivery_date = $parsed['date'];
+		$time_start    = $parsed['time_start'];
+		$time_end      = $parsed['time_end'];
+
+		$include = false;
+
+		if ($single_id) {
+			$include = true;
+		}
+		elseif ($filter_type === 'sale_date') {
+			$include = $this->_date_between(substr($b['sale_time'], 0, 10), $sale_from, $sale_to);
+		}
+		elseif ($filter_type === 'delivery_date') {
+			if (!empty($delivery_date)) {
+				$include = $this->_date_between($delivery_date, $deliv_from, $deliv_to);
+			}
+		}
+		else { // local_delivery_only — STRICT: only exact "Local Delivery" (no date/time), filtered by SALE DATE
+			$is_plain = ($ld && isset($ld['name'])) ? $this->is_plain_local_delivery($ld['name']) : false;
+			if ($is_plain) {
+				$include = $this->_date_between(substr($b['sale_time'], 0, 10), $sale_from, $sale_to);
+			}
+		}
+
+		if (!$include) continue;
+
+		$time_label = $this->build_time_label($time_start, $time_end);
+
+		$filtered[] = array(
+			'sale_id'         => $sale_id,
+			'sale_time'       => $b['sale_time'],
+			'customer_name'   => trim($b['first_name'] . ' ' . $b['last_name']) !== '' ? trim($b['first_name'] . ' ' . $b['last_name']) : 'Walk-in',
+			'customer_phone'  => $b['phone_number'],
+			'address_1'       => $b['address_1'],
+			'address_2'       => $b['address_2'],
+			'city'            => $b['city'],
+			'state'           => $b['state'],
+			'postal_code'     => $b['postal_code'],
+			'delivery_date'   => $delivery_date,
+			'delivery_time_label'     => $time_label,
+			'delivery_time_start_iso' => ($delivery_date && $time_start) ? ($delivery_date . 'T' . $time_start . ':00') : null,
+			'delivery_time_end_iso'   => ($delivery_date && $time_end)   ? ($delivery_date . 'T' . $time_end   . ':00') : null,
+			'is_complete'     => $this->has_done_token($b['comment']),
+			'gcal_event_id'   => $this->extract_gcal_token($b['comment']),
+			'items_html'      => '',
+			'items_text'      => '',
+		);
+	}
+
+	$total = count($filtered);
+
+	// 3) Slice for current page, then attach items just for visible rows
+	if ($limit > 0) {
+		$page_rows = array_slice($filtered, $offset, $limit);
+	} else {
+		$page_rows = $filtered;
+	}
+
+	$this->attach_sale_items($page_rows);
+
+	return array('rows' => $page_rows, 'total' => $total);
 }
+
+
+/**
+ * Parse "Local Delivery ..." lines.
+ * Accept:
+ *   - Local Delivery
+ *   - Local Delivery MM/DD/YYYY
+ *   - Local Delivery MM/DD/YYYY <TIME>
+ *   - Local Delivery MM/DD/YYYY <TIME> - <TIME>
+ * If characters immediately after the date are NOT a time, treat as date-only.
+ * Trailing notes (e.g., "?" or "please call") are ignored.
+ */
+private function parse_local_delivery($item_name)
+{
+	$name = trim($item_name);
+
+	// Exactly "Local Delivery" -> no date/time
+	if (preg_match('/^Local\s+Delivery\s*$/i', $name)) {
+		return array('date' => null, 'time_start' => null, 'time_end' => null);
+	}
+
+	// Must start with "Local Delivery" and contain a date
+	if (!preg_match('/^Local\s+Delivery\s+(\d{1,2}\/\d{1,2}\/\d{4})(.*)$/i', $name, $m)) {
+		// Unknown/legacy formats => no schedule parsed
+		return array('date' => null, 'time_start' => null, 'time_end' => null);
+	}
+
+	$mmddyyyy = $m[1];
+	$rest     = trim($m[2]); // everything after the date
+
+	$date_iso = $this->mdy_to_iso($mmddyyyy);
+
+	// If the very next token is a time, capture it (and optional "- time")
+	$time_start = null;
+	$time_end   = null;
+
+	if ($rest !== '') {
+		// Only accept time when it's at the **start** of $rest
+		if (preg_match('/^(\d{1,2}:\d{2}[AP]M)(?:\s*-\s*(\d{1,2}:\d{2}[AP]M))?/i', $rest, $tm)) {
+			$time_start = $this->ampm_to_24($tm[1]);
+			if (!empty($tm[2])) {
+				$time_end = $this->ampm_to_24($tm[2]);
+			}
+		}
+		// else: first thing after date is NOT a time -> leave times null (date-only)
+	}
+
+	return array('date' => $date_iso, 'time_start' => $time_start, 'time_end' => $time_end);
+}
+
+
+/** Returns true if name is exactly "Local Delivery" (ignores spaces & case) */
+private function is_plain_local_delivery($name)
+{
+	return (bool)preg_match('/^Local Delivery\s*$/i', trim((string)$name));
+}
+
+/** Convert MM/DD/YYYY to YYYY-MM-DD */
+private function mdy_to_iso($mmddyyyy)
+{
+	list($m,$d,$y) = explode('/', $mmddyyyy);
+	$m = str_pad((int)$m, 2, '0', STR_PAD_LEFT);
+	$d = str_pad((int)$d, 2, '0', STR_PAD_LEFT);
+	return $y . '-' . $m . '-' . $d;
+}
+
+/** Convert h:mmAM/PM to 24h HH:MM */
+private function ampm_to_24($hmm_ampm)
+{
+	$u = strtoupper(trim((string)$hmm_ampm));
+	if (!preg_match('/^(\d{1,2}):(\d{2})(AM|PM)$/', $u, $m)) return null;
+
+	$h = (int)$m[1];
+	$min = (int)$m[2];
+	$ampm = $m[3];
+
+	if ($ampm === 'AM') {
+		if ($h === 12) $h = 0;
+	} else { // PM
+		if ($h !== 12) $h += 12;
+	}
+	return str_pad($h, 2, '0', STR_PAD_LEFT) . ':' . str_pad($min, 2, '0', STR_PAD_LEFT);
+}
+
+/** Human label: "3:00pm - 6:00pm", "2:00pm", or "" */
+public function build_time_label($start, $end)
+{
+	if ($start && $end)  return $this->_fmt_12h($start) . ' - ' . $this->_fmt_12h($end);
+	if ($start && !$end) return $this->_fmt_12h($start);
+	return '';
+}
+
+private function _fmt_12h($hhmm)
+{
+	$parts = explode(':', (string)$hhmm);
+	if (count($parts) < 2) return $hhmm;
+	$h = (int)$parts[0];
+	$m = (int)$parts[1];
+	$ampm = ($h >= 12) ? 'pm' : 'am';
+	$h12 = $h % 12;
+	if ($h12 === 0) $h12 = 12;
+	return $h12 . ':' . str_pad($m, 2, '0', STR_PAD_LEFT) . $ampm;
+}
+
+/** PHP timezone offset as ±HH:MM */
+public function php_timezone_offset()
+{
+	return date('P');
+}
+
+/* ----- Comment tokens in sales.comment ----- */
+
+private function extract_gcal_token($comment)
+{
+	if (!is_string($comment) || $comment === '') return null;
+	if (preg_match('/\[\[GCAL:EVENT_ID=([^\]]+)\]\]/', $comment, $m)) return $m[1];
+	return null;
+}
+
+private function has_done_token($comment)
+{
+	if (!is_string($comment) || $comment === '') return false;
+	return (bool)preg_match('/\[\[DELIVERY_DONE\]\]/', $comment);
+}
+
+/* ----- Date-range helper ----- */
+private function _date_between($d, $from, $to)
+{
+	$ds = strtotime($d);
+	$fs = strtotime($from);
+	$ts = strtotime($to);
+	return ($ds !== false && $ds >= $fs && $ds <= $ts);
+}
+
+/* ----- Attach items: builds Items column HTML & plain text ----- */
+public function attach_sale_items(array &$rows)
+{
+	if (empty($rows)) return;
+
+	$ids = array();
+	foreach ($rows as $r) $ids[] = (int)$r['sale_id'];
+
+	$this->db->select('si.sale_id, i.name, si.quantity_purchased');
+	$this->db->from('sales_items AS si');
+	$this->db->join('items AS i', 'i.item_id = si.item_id', 'inner');
+	$this->db->where_in('si.sale_id', $ids);
+	$this->db->order_by('si.sale_id asc, si.line asc');
+	$items = $this->db->get()->result_array();
+
+	$by_sale = array();
+	foreach ($items as $it) {
+		$by_sale[(int)$it['sale_id']][] = $it;
+	}
+
+	foreach ($rows as &$r) {
+		$sid = (int)$r['sale_id'];
+		$list = isset($by_sale[$sid]) ? $by_sale[$sid] : array();
+
+		$html_parts = array();
+		$text_parts = array();
+
+		foreach ($list as $li) {
+			$nm  = trim($li['name']);
+			$qty = (float)$li['quantity_purchased'];
+			$qty_fmt = rtrim(rtrim(number_format($qty, 2, '.', ''), '0'), '.');
+
+			// Escape safely
+			if (function_exists('html_escape')) {
+				$nm_html = html_escape($nm);
+			} else {
+				$nm_html = htmlspecialchars($nm, ENT_QUOTES, 'UTF-8');
+			}
+
+			// One item per line: name (single-line, ellipsis) + qty
+			$html_parts[] = '<div class="item-row">'
+      	. '<span class="item-name">' . $nm_html . '</span>'
+      	. '<span class="item-qty">&nbsp;&times; ' . $qty_fmt . '</span>'
+      	. '</div>';
+
+			$text_parts[] = $nm . ' x ' . $qty_fmt;
+		}
+
+		$r['items_html'] = implode('', $html_parts); // stacked lines
+		$r['items_text'] = implode("\n", $text_parts); // nice for calendar/exports
+	}
+	unset($r);
+}
+
+/* ----- Completion flags (writes [[DELIVERY_DONE]] token) ----- */
+public function set_delivery_complete_flag($sale_id, $done)
+{
+	$sale_id = (int)$sale_id;
+	if ($sale_id <= 0) return;
+
+	$row = $this->db->select('comment')->from('sales')->where('sale_id', $sale_id)->get()->row_array();
+	$comment = isset($row['comment']) ? (string)$row['comment'] : '';
+
+	$has = $this->has_done_token($comment);
+
+	if ($done && !$has) {
+		$comment = trim($comment . ' [[DELIVERY_DONE]]');
+	} elseif (!$done && $has) {
+		$comment = preg_replace('/\s*\[\[DELIVERY_DONE\]\]/', '', $comment);
+	}
+
+	$this->db->where('sale_id', $sale_id)->update('sales', array('comment' => $comment));
+}
+
+public function bulk_set_delivery_complete_flags(array $sale_ids, $done)
+{
+	if (empty($sale_ids)) return;
+	foreach ($sale_ids as $sid) $this->set_delivery_complete_flag($sid, $done);
+}
+
+/* ----- Google Calendar token writer (stores/updates [[GCAL:EVENT_ID=...]]) ----- */
+public function attach_gcal_event_token($sale_id, $event_id)
+{
+	$sale_id  = (int)$sale_id;
+	$event_id = trim((string)$event_id);
+	if ($sale_id <= 0 || $event_id === '') return;
+
+	$row = $this->db->select('comment')->from('sales')->where('sale_id', $sale_id)->get()->row_array();
+	$comment = isset($row['comment']) ? (string)$row['comment'] : '';
+
+	if (preg_match('/\[\[GCAL:EVENT_ID=[^\]]+\]\]/', $comment)) {
+		$comment = preg_replace('/\[\[GCAL:EVENT_ID=[^\]]+\]\]/', '[[GCAL:EVENT_ID=' . $event_id . ']]', $comment);
+	} else {
+		$comment = trim($comment . ' [[GCAL:EVENT_ID=' . $event_id . ']]');
+	}
+
+	$this->db->where('sale_id', $sale_id)->update('sales', array('comment' => $comment));
+}
+
+}
+
 ?>
