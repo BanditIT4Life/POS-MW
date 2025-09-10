@@ -871,7 +871,18 @@ class Sales extends Secure_Controller
 			$data['first_name'] = $customer_info->first_name;
 			$data['last_name'] = $customer_info->last_name;
 			$data['customer_email'] = $customer_info->email;
-			$data['customer_address'] = $customer_info->address_1;
+			// Build a single line for street address that ALWAYS keeps address_1 and address_2 together
+$street_parts = array_filter([
+    trim((string)$customer_info->address_1),
+    trim((string)$customer_info->address_2)
+]);
+
+// Join with a single space so address_2 sits next to address_1 (never on a new line)
+$street_line = trim(implode(' ', $street_parts));
+
+// Expose to views (receipt) as customer_address on ONE line
+$data['customer_address'] = $street_line;
+
 $location_line = '';
 
 if (!empty($customer_info->city)) {
@@ -1597,5 +1608,153 @@ if (!empty($location_line) && !empty($customer_info->phone_number)) {
 
 		return NULL;
 	}
+ 
+ 
+ 
+ 
+ 
+ 
+ /* ===== Delivery Report under /sales ===== */
+
+private function _deny_delivery_report()
+{
+	$this->load->view('partial/header');
+	$this->load->view('no_access'); // fallback; OSPOS has this view
+	$this->load->view('partial/footer');
+}
+
+public function delivery_report()
+{
+	// Permission gate
+	$emp = $this->Employee->get_logged_in_employee_info();
+	if(!$this->Employee->has_grant('sales_delivery_report', $emp->person_id))
+	{
+		return $this->_deny_delivery_report();
+	}
+
+	$this->load->helper(array('url','form','date','security'));
+	$this->load->model('Sale');
+	$this->load->model('Appconfig');
+
+	$filter_type = $this->input->get('filter_type', TRUE);
+	$valid_types = array('delivery_date','sale_date','local_delivery_only');
+	if (!in_array($filter_type, $valid_types, true)) $filter_type = 'delivery_date';
+
+	$today = date('Y-m-d');
+
+	$sale_from  = $this->input->get('sale_date_from', TRUE) ?: $today;
+	$sale_to    = $this->input->get('sale_date_to', TRUE)   ?: $today;
+	$deliv_from = $this->input->get('delivery_date_from', TRUE) ?: $today;
+	$deliv_to   = $this->input->get('delivery_date_to', TRUE)   ?: $today;
+
+	$per_page_in = (int)$this->input->get('per_page', TRUE);
+	$per_page = in_array($per_page_in, array(25,50,100), true) ? $per_page_in : 25;
+
+	$page_in = (int)$this->input->get('page', TRUE);
+	$page = ($page_in > 0) ? $page_in : 1;
+	$offset = ($page - 1) * $per_page;
+
+	$filters = array(
+		'filter_type'        => $filter_type,
+		'sale_date_from'     => $sale_from,
+		'sale_date_to'       => $sale_to,
+		'delivery_date_from' => $deliv_from,
+		'delivery_date_to'   => $deliv_to,
+		'limit'              => $per_page,
+		'offset'             => $offset
+	);
+
+	$result = $this->Sale->get_deliveries($filters);
+
+	$data = array();
+	$data['rows']      = $result['rows'];
+	$data['total']     = (int)$result['total'];
+	$data['per_page']  = $per_page;
+	$data['page']      = $page;
+	$data['pages']     = ($per_page > 0) ? (int)ceil($data['total'] / $per_page) : 1;
+
+	// Which dates to show in the visible input on load
+	$data['active_from_disp'] = ($filter_type === 'sale_date') ? $sale_from : $deliv_from;
+	$data['active_to_disp']   = ($filter_type === 'sale_date') ? $sale_to   : $deliv_to;
+
+	// Persisted hidden fields
+	$data['sale_date_from']     = $sale_from;
+	$data['sale_date_to']       = $sale_to;
+	$data['delivery_date_from'] = $deliv_from;
+	$data['delivery_date_to']   = $deliv_to;
+
+	$data['filter_type']  = $filter_type;
+	$data['gcal_enabled'] = (bool)$this->Appconfig->get('gcal_delivery_enabled');
+
+	// CSRF for AJAX
+	$data['csrf_name'] = $this->security->get_csrf_token_name();
+	$data['csrf_hash'] = $this->security->get_csrf_hash();
+
+	// Build base query for pager links
+	$params = $this->input->get();
+	unset($params['page'], $params['per_page']);
+	$data['query_string_base'] = http_build_query($params);
+
+	$this->load->view('partial/header');
+	$this->load->view('sales/delivery_report', $data);
+	$this->load->view('partial/footer');
+}
+
+public function delivery_complete()
+{
+	$emp = $this->Employee->get_logged_in_employee_info();
+	if(!$this->Employee->has_grant('sales_delivery_report', $emp->person_id))
+	{
+		return $this->output->set_content_type('application/json')->set_output(json_encode(['ok'=>false, 'error'=>'Access denied']));
+	}
+
+	$this->load->model('Sale');
+	$sale_id = (int)$this->input->post('sale_id');
+	$done    = (int)$this->input->post('done') ? 1 : 0;
+	$this->Sale->set_delivery_complete_flag($sale_id, $done);
+	$this->output->set_content_type('application/json')->set_output(json_encode(['ok'=>true]));
+}
+
+public function delivery_complete_bulk()
+{
+	$emp = $this->Employee->get_logged_in_employee_info();
+	if(!$this->Employee->has_grant('sales_delivery_report', $emp->person_id))
+	{
+		return $this->output->set_content_type('application/json')->set_output(json_encode(['ok'=>false, 'error'=>'Access denied']));
+	}
+
+	$this->load->model('Sale');
+	$ids  = $this->input->post('sale_ids');
+	$done = (int)$this->input->post('done') ? 1 : 0;
+	if(!is_array($ids)) $ids = array();
+	$this->Sale->bulk_set_delivery_complete_flags($ids, $done);
+	$this->output->set_content_type('application/json')->set_output(json_encode(['ok'=>true]));
+}
+
+public function delivery_gcal_create_event()
+{
+	$emp = $this->Employee->get_logged_in_employee_info();
+	if(!$this->Employee->has_grant('sales_delivery_report', $emp->person_id))
+	{
+		return $this->output->set_content_type('application/json')->set_output(json_encode(['ok'=>false, 'error'=>'Access denied']));
+	}
+
+	$this->load->model('Sale');
+	$this->load->model('Appconfig');
+
+	if(!(bool)$this->Appconfig->get('gcal_delivery_enabled'))
+	{
+		return $this->output->set_content_type('application/json')->set_output(json_encode(['ok'=>false,'error'=>'Google Calendar is OFF']));
+	}
+
+	// Stub: wire to your GCal code; attach token via Sale->attach_gcal_event_token($sale_id,$event_id)
+	$sale_id = (int)$this->input->post('sale_id');
+	// ...create/update event...
+	$event_id = 'PLACEHOLDER_EVT_ID'; // <-- replace with your actual ID
+	$this->Sale->attach_gcal_event_token($sale_id, $event_id);
+
+	$this->output->set_content_type('application/json')->set_output(json_encode(['ok'=>true,'event_id'=>$event_id]));
+}
+
 }
 ?>
